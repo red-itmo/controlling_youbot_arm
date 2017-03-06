@@ -1,6 +1,6 @@
-build/*.aux
-build/*.bbl
-build/*.blg
-build/*.log
-build/*.toc
-build/*.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.log
+*.toc
+*.synctex.gz
