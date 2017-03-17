@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- common properties -->
+	<xacro:property name="M_PI" value="3.1415926535897931" />
+    <xacro:property name="threshold" value="0.01" />
+
+	<!-- arm limits positions (deg) -->
+	<!-- l - lower; u - upper angles -->
+	<xacro:property name="joint_1_limit_l" value="${-M_PI}" />
+	<xacro:property name="joint_1_limit_u" value="${M_PI}" />
+
+	<xacro:property name="joint_2_limit_l" value="${-M_PI}" />
+	<xacro:property name="joint_2_limit_u" value="${M_PI}" />
+
+	<xacro:property name="joint_3_limit_l" value="${-M_PI}" />
+	<xacro:property name="joint_3_limit_u" value="${M_PI}" />
+	
+	<xacro:property name="joint_4_limit_l" value="${-M_PI}" />
+	<xacro:property name="joint_4_limit_u" value="${M_PI}" />
+
+	<xacro:property name="joint_5_limit_l" value="${-M_PI}" />
+	<xacro:property name="joint_5_limit_u" value="${M_PI}" />
+
+	<!-- fingers limits, values are in meters -->
+	<xacro:property name="finger_joint" value="${0.023 / 2.0}" />	
+	<xacro:property name="finger_joint_soft" value="${(0.023 - 0.001) / 2.0}" />
+
+</robot>

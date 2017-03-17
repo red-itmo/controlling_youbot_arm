@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<robot 	xmlns:xacro="http://ros.org/wiki/xacro"
+		name="youbot_arm" >
+
+	<xacro:include filename="$(find youbot_arm_control)/urdf/limits_dh.urdf.xacro" />
+
+	<!-- foot for arm -->
+	<link name="base_link">
+	</link>
+
+	<!-- LINKS -->
+	<link name="link_0">
+		<visual>
+			<origin xyz="-0.024 0 0.032" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm0.dae" />
+			</geometry>
+			<material name="youBot/DarkGrey" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm0_convex.dae" />
+			</geometry>
+		</collision>		
+	</link>
+
+	<link name="link_1">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm1.dae" />
+			</geometry>
+			<material name="youBot/Orange" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm1_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="link_2">
+		<visual>
+			<origin xyz="0 0.078 0.032" rpy="${-M_PI / 2} 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm2.dae" />
+			</geometry>
+		</visual>
+		<collision>
+			<origin xyz="0 -0.032 0.078" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm2_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="link_3">
+		<visual>
+			<origin xyz="0.079 0 -0.028" rpy="${-M_PI / 2} 0 ${-M_PI / 2}" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm3.dae" />
+			</geometry>
+			<material name="youBot/Orange" />
+		</visual>
+		<collision>
+			<origin xyz="0.000 0.028 0.079" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm3_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="link_4">
+		<visual>
+			<origin xyz="0 -0.029 0.010" rpy="${-M_PI / 2} 0 ${-M_PI}"/>
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm4.dae" />
+			</geometry>
+			<material name="youBot/Orange" />
+		</visual>
+		<collision>
+			<origin xyz="0 -0.010 0.029" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm4_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="link_5">
+		<visual>
+			<origin xyz="0 0 -0.017" rpy="0 0 ${M_PI}" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm5.dae" />
+			</geometry>
+			<material name="youBot/DarkGrey" />
+		</visual>
+		<collision>
+			<origin xyz="0.003 0 -0.034" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_arm/arm5_convex.dae" />
+			</geometry>
+		</collision>		
+	</link>
+
+	<link name="wrist_link">
+		<visual>
+			<origin xyz="-0.003 0 -0.040" rpy="0 0 0" />
+			<geometry>
+			    <mesh filename="package://youbot_description/meshes/youbot_gripper/palm.dae" />
+			</geometry>
+			<material name="Black" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_gripper/palm_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="tool"></link>
+
+	<link name="finger_link_l">
+		<visual>
+			<origin xyz="0 0 0.01" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_gripper/finger.dae" />
+			</geometry>
+			<material name="Black" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_gripper/finger_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<link name="finger_link_r">
+		<visual>
+			<origin xyz="0 0 0.01" rpy="0 0 ${M_PI}" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_gripper/finger.dae" />
+			</geometry>
+			<material name="Black" />
+		</visual>
+		<collision>
+			<origin xyz="0.000 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://youbot_description/meshes/youbot_gripper/finger_convex.dae" />
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- JOINTS -->
+	<joint name="joint_0" type="fixed">
+		<parent link="base_link"/>
+		<child link="link_0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+	</joint>
+
+	<joint name="joint_1" type="revolute">
+		<parent link="link_0"/>
+		<child link="link_1"/>
+        <limit effort="${9.5}" velocity="${M_PI / 2.0}" lower="${joint_1_limit_l}" upper="${joint_1_limit_u}"/>
+        <!--<origin xyz="0.024 0 0.096" rpy="0 0 0"/>--> <!-- in standart urdf -->
+        <origin xyz="0 0 0.128" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+
+	<joint name="joint_2" type="revolute">
+		<parent link="link_1"/>
+		<child link="link_2"/>
+		<limit effort="${9.5}" velocity="${M_PI / 2.0}" lower="${joint_2_limit_l}" upper="${joint_2_limit_u}"/>
+		<origin xyz="0.033 0 0.019" rpy="${M_PI / 2} 0 0"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+	
+	<joint name="joint_3" type="revolute">
+		<parent link="link_2"/>
+		<child link="link_3"/>
+		<limit effort="${6.0}" velocity="${M_PI / 2.0}" lower="${joint_3_limit_l}" upper="${joint_3_limit_u}"/>
+        <origin xyz="0 0.155 0" rpy="0 0 ${M_PI / 2}"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+	
+	<joint name="joint_4" type="revolute">
+		<parent link="link_3"/>
+		<child link="link_4"/>
+		<limit effort="${2.0}" velocity="${M_PI / 2.0}" lower="${joint_4_limit_l}" upper="${joint_4_limit_u}"/>
+		<origin xyz="0.135 0 0" rpy="0 0 0" />
+		<axis xyz="0 0 1"/>
+	</joint>
+	
+	<joint name="joint_5" type="revolute">
+		<parent link="link_4"/>
+		<child link="link_5"/>
+		<limit effort="${1.0}" velocity="${M_PI / 2.0}" lower="${joint_5_limit_l}" upper="${joint_5_limit_u}" />
+		<origin xyz="0 -0.1136 0" rpy="${M_PI / 2} 0 0" />
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<!-- palm. from joint_5 to griper -->
+	<joint name="wrist" type="fixed">
+		<parent link="link_5"/>
+		<child link="wrist_link"/>
+		<origin xyz="0 0 0.05716" rpy="0 0 0" />
+	</joint>
+
+	<!-- point at the end of griper -->
+	<joint name="tool_frame" type="fixed">
+		<parent link="link_5"/>
+		<child link="tool"/>
+		<origin xyz="0 0 0.105" rpy="0 0 0" />
+	</joint>
+
+
+	<joint name="finger_joint_l" type="prismatic">
+		<parent link="wrist_link"/>
+		<child link="finger_link_l"/>
+		<limit effort="1" velocity="0.1" lower="0" upper="${finger_joint}"/>
+		<origin xyz="0 0.0082 0" rpy="0 0 ${M_PI}" />
+		<axis xyz="0 -1 0" />
+	</joint>
+
+	<joint name="finger_joint_r" type="prismatic">
+		<parent link="wrist_link"/>
+		<child link="finger_link_r"/>
+		<limit effort="1" velocity="0.1" lower="0" upper="${finger_joint}"/>
+		<origin xyz="0 -0.0082 0" rpy="0 0 ${M_PI}" />
+		<axis xyz="0 1 0"/>
+	</joint>
+
+    <!-- TEST FORWARD KINEMATICS -->
+    <link name="test_box">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.04 .02 .01"/>
+            </geometry>
+              <material name="box">
+                  <color rgba="1.0 0.4 0.0 1.0"/>
+              </material>
+        </visual>
+    </link>
+
+    <joint name="test_box_frame" type="floating">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    	<parent link="base_link"/>
+		<child link="test_box"/>
+	</joint>
+
+</robot>

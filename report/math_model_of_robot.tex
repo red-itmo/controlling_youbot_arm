@@ -1,2 +1,146 @@
 \section{Математическая модель манипулятора}\label{part_math_model_of_robot}
+
+\subsection{Кинематика манипулятора}\label{part_kinematics}
+
+Представим рассматриваемый манипулятор в виде последовательной кинематической цепи, каждое звено которой входит в состав одной или двух кинематических пар (КП). Все КП вращательные, V-класса -- цилиндрические шарниры. Принципиальная схема изображена на рисунке~\ref{img:kinematics} a.
+
+\begin{figure}[h!]
+	\begin{minipage}[h]{0.5\linewidth}
+		\center{\includegraphics[width=0.95\linewidth]{kinematics_schema.pdf} \\ а) кинематическая схема}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[h]{0.5\linewidth}
+		\center{\includegraphics[width=0.95\linewidth]{kinematics_frames.pdf} \\ б) схема расположения СК КП}
+	\end{minipage}
+	\caption{Схемы}
+	\label{img:kinematics}
+\end{figure}
+
+Звенья будем рассматривать как абсолютно твердые тела, определяющие связь между двумя соседними шарнирами. Для описания шарнирных соединений между смежными звеньями воспользуемся методом Денавита и Хартенберга (ДХ-представление), который может быть представлен, как последовательность из двух описанных ниже шагов\footnote{Представление Денавита-Хартенберга состоит в формировании однородной матрицы преобразования, имеющей размерность~$4 \times 4$ и описывающей положение системы координат каждого звена относительно системы координат предыдущего звена.}.
+
+
+Первым шагом, следует сформировать системы координат для каждой~КП, руководствуясь следующими правилами:
+
+\begin{enumerate}
+	\item ось $z_{i-1}$ направлена вдоль оси $i$-ой КП;
+	\item ось $x_i$ параллельна общему перпендикуляру: $x_i = z_i \times z_{i-1}$. Если оси $z_i$ и $z_{i-1}$ пересекаются, то $x_i$ выбирается, как нормаль к образованной ими плоскости;
+	
+	\item ось $y_i$ дополняет оси $z_i$ и $x_i$ до правой декартовой системы координат. 
+\end{enumerate}
+
+Вторым шагом, нужно определить параметры ДХ:
+
+\begin{enumerate}
+	\item $a_i$ -- расстояние от $z_{i-1}$ до $z_i$ вдоль $x_i$;
+	\item $\alpha_i$ -- угол от $z_{i-1}$ до $z_i$ вокруг $x_i$;
+	\item $d_i$ -- расстояние от $x_{i-1}$ до $x_i$ вдоль $z_{i-1}$;
+	\item $\theta_i$ -- угол от $x_{i-1}$ до $x_i$ вокруг $z_{i-1}$.
+\end{enumerate}
+
+Таким образом, ДХ-представление твердых звеньев зависит от четырех геометрических параметров, соответствующих каждому звену. Эти четыре параметра полностью описывают любое вращательное или поступательное движение. 
+
+Для вращательных КП параметры $d_i$, $a_i$ и $\alpha_i$ не изменяются и являются их геометрическими размерами. В то время,  как $\theta_i$ переменная величина, изменяющаяся при вращении $i$-го звена относительно $(i-1)$-го.
+
+Для каждого звена этот алгоритм формирует ортонормированную систему координат. Системы координат нумеруются в порядке возрастания от основания к схвату манипулятора. Для обследуемого манипулятора, выбранные системы координат изображены на рисунке~\ref{img:kinematics} б. 
+
+Параметры ДХ указаны в таблице~\ref{table_DH_params}
+
+\begin{table}[h!]
+	\caption{Параметры Денавита-Хартенберга}
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			Звено 	& $a_i$ & $\alpha_i$ & $d_i$ & $\theta_i$\\
+			\hline
+			1 		& $0$ & $0$ 	& $d_1$ & $\theta_1$\\
+			\hline
+			2  		& $a_2$ & $\pi/2$ & $d_2$ & $\theta_2$\\
+			\hline	
+			3 		& $a_3$ & $0$ 	& $0$ 	& $\theta_3+\pi/2$\\
+			\hline
+			4 		& $a_4$ & $0$ 	& $0$ 	& $\theta_4$\\
+			\hline
+			5 		& $0$ & $\pi/2$ & $0$ 	& $\theta_5$\\
+			\hline
+			6 		& $0$ & $0$ 	& $d_6$ & $\theta_6$\\
+			\hline
+		\end{tabular}
+	\end{center}
+	\label{table_DH_params}
+\end{table}
+
+Взаимное расположение соседних звеньев описывается однородной матрицей преобразования~\eqref{DH_matrix_A} размерностью $4 \times 4$, которая формируется в соответствии с формулой~\eqref{DH_matrix}.
+
+\begin{equation}\label{DH_matrix}
+^{i}A_{i+1} = R_{z_i, \theta_i} \cdot T_{z_i, d_i} \cdot T_{x_i, a_i} \cdot R_{x_i, \alpha_i}	
+\end{equation}
+где $R_{z_i, \theta_i}$~--- матрица поворота вокруг оси $z_i$ на угол $\theta_i$, $T_{z_i, d_i}$~--- матрица трансформации вдоль оси $z_i$ на расстояние $d_i$, $T_{x_i, a_i}$~---матрица трансформации вдоль оси $x_i$ на расстояние $a_i$,  $R_{x_i, \alpha_i}$~--- матрица поворота вокруг оси $x_i$ на угол $\alpha_i$.
+
+\begin{equation}\label{DH_matrix_A}
+^{i}A_{i+1} =
+\begin{bmatrix}
+R_{3 \times 3} & d_{3 \times 1}\\
+0_{1 \times 3} & 1
+\end{bmatrix}
+\end{equation}
+где $R_{3 \times 3}$~--- матрица поворота СК$_i$ в СК$_{i+1}$, $d_{3 \times 1}$~--- вектор соединяющий СК$_i$ и СК$_{i+1}$.
+
+*****************
+
+
+\begin{equation}\label{DH_matrix_Rz}
+R_{z_i, \theta_i} = 
+\left[\begin{matrix}
+\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} & 0 & 0\\
+\sin{\left (\theta_i \right )} & \cos{\left (\theta_i \right )} & 0 & 0\\
+0 & 0 & 1 & 0\\0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Tz}
+T_{z_i, d_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & d_{i}\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Tx}
+T_{x_i, a_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & a_{i}\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Rx}
+R_{x_i, \alpha_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & 0\\
+0 & \cos{\left (\alpha_i \right )} & - \sin{\left (\alpha_i \right )} & 0\\
+0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & 0\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Ai}
+^{i}A_{i+1} =
+\left[\begin{matrix}
+\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} \cos{\left (\alpha_i \right )} & \sin{\left (\alpha_i \right )} \sin{\left (\theta_i \right )} & a_{i} \cos{\left (\theta_i \right )}\\
+\sin{\left (\theta_i \right )} & \cos{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & - \sin{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & a_{i} \sin{\left (\theta_i \right )}\\
+0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & d_{i}\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\subsubsection{Прямая задача кинематики}\label{part_kinematics_forward}
+
+
+
+\subsubsection{Обратная задача кинематики}\label{part_kinematics_inverse}
+
 \newpage
