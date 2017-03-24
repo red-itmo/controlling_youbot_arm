@@ -2,6 +2,8 @@
 
 \subsection{Кинематика манипулятора}\label{part_kinematics}
 
+% TODO Тут обосновать зачем нужна кинематика манипулятора
+
 Представим рассматриваемый манипулятор в виде последовательной кинематической цепи, каждое звено которой входит в состав одной или двух кинематических пар (КП). Все КП вращательные, V-класса -- цилиндрические шарниры. Принципиальная схема изображена на рисунке~\ref{img:kinematics} a.
 
 \begin{figure}[h!]
@@ -79,68 +81,116 @@
 \begin{equation}\label{DH_matrix_A}
 ^{i}A_{i+1} =
 \begin{bmatrix}
-R_{3 \times 3} & d_{3 \times 1}\\
+R_{3 \times 3} & p_{3 \times 1}\\
 0_{1 \times 3} & 1
 \end{bmatrix}
 \end{equation}
-где $R_{3 \times 3}$~--- матрица поворота СК$_i$ в СК$_{i+1}$, $d_{3 \times 1}$~--- вектор соединяющий СК$_i$ и СК$_{i+1}$.
+где $R_{3 \times 3}$~--- матрица поворота СК$_i$ в СК$_{i+1}$, $p_{3 \times 1}$~--- вектор соединяющий СК$_i$ и СК$_{i+1}$.
 
-*****************
+Для описания движения манипулятора, в робототехнике решаются две основные задачи кинематики: прямая и обратная.
+ 
+Решением прямой задачи, находят положение схвата манипулятора в декартовой системе координат, при заданных обобщенных координатах.
 
-
-\begin{equation}\label{DH_matrix_Rz}
-R_{z_i, \theta_i} = 
-\left[\begin{matrix}
-\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} & 0 & 0\\
-\sin{\left (\theta_i \right )} & \cos{\left (\theta_i \right )} & 0 & 0\\
-0 & 0 & 1 & 0\\0 & 0 & 0 & 1
-\end{matrix}\right]
-\end{equation}
-
-\begin{equation}\label{DH_matrix_Tz}
-T_{z_i, d_i} =
-\left[\begin{matrix}
-1 & 0 & 0 & 0\\
-0 & 1 & 0 & 0\\
-0 & 0 & 1 & d_{i}\\
-0 & 0 & 0 & 1
-\end{matrix}\right]
-\end{equation}
-
-\begin{equation}\label{DH_matrix_Tx}
-T_{x_i, a_i} =
-\left[\begin{matrix}
-1 & 0 & 0 & a_{i}\\
-0 & 1 & 0 & 0\\
-0 & 0 & 1 & 0\\
-0 & 0 & 0 & 1
-\end{matrix}\right]
-\end{equation}
-
-\begin{equation}\label{DH_matrix_Rx}
-R_{x_i, \alpha_i} =
-\left[\begin{matrix}
-1 & 0 & 0 & 0\\
-0 & \cos{\left (\alpha_i \right )} & - \sin{\left (\alpha_i \right )} & 0\\
-0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & 0\\
-0 & 0 & 0 & 1
-\end{matrix}\right]
-\end{equation}
-
-\begin{equation}\label{DH_matrix_Ai}
-^{i}A_{i+1} =
-\left[\begin{matrix}
-\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} \cos{\left (\alpha_i \right )} & \sin{\left (\alpha_i \right )} \sin{\left (\theta_i \right )} & a_{i} \cos{\left (\theta_i \right )}\\
-\sin{\left (\theta_i \right )} & \cos{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & - \sin{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & a_{i} \sin{\left (\theta_i \right )}\\
-0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & d_{i}\\
-0 & 0 & 0 & 1
-\end{matrix}\right]
-\end{equation}
+Решение обратной задачи позволяет найти обобщенные координаты при заданном положении и ориентации схвата.
 
 \subsubsection{Прямая задача кинематики}\label{part_kinematics_forward}
 
+\if 0
+% удалить
+Представим прямую задачу кинематики функцией $f$, которая определяет зависимость между  конфигурационным и рабочим пространствами манипулятора:
+\begin{equation}
+	x = f(q)
+\end{equation}
+где $x \in \mathbb{R}^6$ --- вектор положения и ориентации схвата в рабочем пространстве, $q \in \mathbb{R}^5$ --- вектор обобщенных координат в конфигурационном пространстве манипулятора.
+\fi
 
+Представим прямую задачу кинематики (ПЗК) манипулятора выражением:
+\begin{equation}\label{fk}
+	^0A_6 = \prod^{6}_{i=1}{^{i-1}A_i(q_i)} = ^0A_1 \cdot ^1A_2 \cdot ^2A_3 \cdot ^3A_4 \cdot ^4A_5 \cdot ^5A_6
+\end{equation}
+где $^0A_6$~--- матрица $4 \times 4$, первые $3$ столбца которой представляют ориентацию, последний --- положение схвата; $^{i-1}A_i$~--- однородная матрица преобразования из $(i-1)$ в $i$-ую СК в общем виде:
+\begin{equation}
+	^{i-1}A_i = 
+	\left[\begin{matrix}
+	\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} \cos{\left (\alpha_i \right )} & \sin{\left (\alpha_i \right )} \sin{\left (\theta_i \right )} & a_{i} \cos{\left (\theta_i \right )}\\
+	\sin{\left (\theta_i \right )} & \cos{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & - \sin{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & a_{i} \sin{\left (\theta_i \right )}\\
+	0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & d_{i}\\
+	0 & 0 & 0 & 1
+	\end{matrix}\right]
+\end{equation}
+
+Теперь, учитывая ДХ-параметры из таблицы~\ref{DH_matrix} находим матрцы преобразования СК, рисунок~\ref{img:kinematics} б.
+
+\begin{align*}
+	^0A_1 &=& 
+	\left[\begin{matrix}1 & 0 & 0 & 0\\0 & 1 & 0 & 0\\0 & 0 & 1 & d_{1}\\0 & 0 & 0 & 1\end{matrix}\right]; 
+	^1A_2 =
+	\left[\begin{matrix}c_{\theta_1} & - s_{\theta_1} & 0 & a_{2} c_{\theta_1}\\s_{\theta_1} & c_{\theta_1} & 0 & a_{2} s_{\theta_1}\\0 & 0 & 1 & d_{2}\\0 & 0 & 0 & 1\end{matrix}\right]; 
+	^2A_3 =
+	\left[\begin{matrix}c_{\theta_2} & 0 & s_{\theta_2} & a_{3} c_{\theta_2}\\s_{\theta_2} & 0 & - c_{\theta_2} & a_{3} s_{\theta_2}\\0 & 1 & 0 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
+	\\
+	^3A_4 &=& 
+	\left[\begin{matrix}c_{\theta_3} & - s_{\theta_3} & 0 & a_{4} c_{\theta_3}\\s_{\theta_3} & c_{\theta_3} & 0 & a_{4} s_{\theta_3}\\0 & 0 & 1 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
+	^4A_5 =
+	\left[\begin{matrix}c_{\theta_4} & - s_{\theta_4} & 0 & 0\\s_{\theta_4} & c_{\theta_4} & 0 & 0\\0 & 0 & 1 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
+	^5A_6 =
+	 \left[\begin{matrix}c_{\theta_5} & 0 & s_{\theta_5} & 0\\s_{\theta_5} & 0 & - c_{\theta_5} & 0\\0 & 1 & 0 & d_{6}\\0 & 0 & 0 & 1\end{matrix}\right]
+\end{align*}
+
+Таким образом, для любого вектора $q$, позьзуясь выражением~\eqref{fk} и ДХ-параметрами маниплятора, можно определить однозначное положение и ориентацию схвата манипулятора в пространстве.
+
+Для проверки, зададим вектор обобщенных координат:
+\begin{equation}
+	q =
+	\begin{bmatrix}
+	\theta_1 & \theta_2 & \theta_3 & \theta_4 & \theta_5
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	0 & 0 & 0 & 90 & 0
+	\end{bmatrix}
+\end{equation}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.2\textwidth]{kinematics_check.pdf}
+	\caption{Конфигурация манипулятора для заданного вектора $q$}
+	\label{kinematics_check}
+\end{figure}
+
+В результате решения ПЗК должны получить:
+\begin{align*}
+	p = 
+	\begin{bmatrix}
+		0.033\\
+		0\\
+		0.655 
+	\end{bmatrix},
+	o =
+	\begin{bmatrix}
+		0\\
+		0\\
+		180
+	\end{bmatrix}, 
+\end{align*}
+где $p$~--- положение схвата, $o$~--- ориентация схвата (крен, рыскание, тангаж).
+
+Вычислим матрицу $^0A_6$:
+\begin{equation}
+	^0A_6 = 
+	\left[\begin{matrix}-1 & 0 & 0 & 0.033\\0 & -1 & 0 & 0\\0 & 0 & 1 & 0.655\\0 & 0 & 0 & 1\end{matrix}\right]
+\end{equation}
+
+Из приведенного примера следует, что ДХ-параметры и матрицы трансформации найдены верно.
 
 \subsubsection{Обратная задача кинематики}\label{part_kinematics_inverse}
+Обратную задачу кинематики представим, как функцию $g = f^{-1}$, представляющую переход из рабочего в конфигурационное пространство:
+\begin{equation}
+q = g(x) = f^{-1}(x)
+\end{equation}
+где $x \in \mathbb{R}^6$ --- рабочее пространство, $q \in \mathbb{R}^5$ --- конфигурационное пространство манипулятора.
+
+
+
 
 \newpage
