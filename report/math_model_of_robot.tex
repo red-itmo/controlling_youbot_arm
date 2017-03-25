@@ -54,17 +54,17 @@
 			\hline
 			Звено 	& $a_i$ & $\alpha_i$ & $d_i$ & $\theta_i$\\
 			\hline
-			1 		& $0$ & $0$ 	& $d_1$ & $\theta_1$\\
+			1 		& $0$ & $0$ 	& $d_1$ & $0$\\
 			\hline
-			2  		& $a_2$ & $\pi/2$ & $d_2$ & $\theta_2$\\
+			2  		& $a_2$ & $\pi/2$ & $d_2$ & $\theta_1$\\
 			\hline	
-			3 		& $a_3$ & $0$ 	& $0$ 	& $\theta_3+\pi/2$\\
+			3 		& $a_3$ & $0$ 	& $0$ 	& $\theta_2+\pi/2$\\
 			\hline
-			4 		& $a_4$ & $0$ 	& $0$ 	& $\theta_4$\\
+			4 		& $a_4$ & $0$ 	& $0$ 	& $\theta_3$\\
 			\hline
-			5 		& $0$ & $\pi/2$ & $0$ 	& $\theta_5$\\
+			5 		& $0$ & $\pi/2$ & $0$ 	& $\theta_4$\\
 			\hline
-			6 		& $0$ & $0$ 	& $d_6$ & $\theta_6$\\
+			6 		& $0$ & $0$ 	& $d_6$ & $\theta_5$\\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -125,16 +125,16 @@ R_{3 \times 3} & p_{3 \times 1}\\
 	^0A_1 &=& 
 	\left[\begin{matrix}1 & 0 & 0 & 0\\0 & 1 & 0 & 0\\0 & 0 & 1 & d_{1}\\0 & 0 & 0 & 1\end{matrix}\right]; 
 	^1A_2 =
-	\left[\begin{matrix}c_{\theta_1} & - s_{\theta_1} & 0 & a_{2} c_{\theta_1}\\s_{\theta_1} & c_{\theta_1} & 0 & a_{2} s_{\theta_1}\\0 & 0 & 1 & d_{2}\\0 & 0 & 0 & 1\end{matrix}\right]; 
+ 	\left[\begin{matrix}c_{\theta_1} & 0 & s_{\theta_1} & a_{2} c_{\theta_1}\\s_{\theta_1} & 0 & - c_{\theta_1} & a_{2} s_{\theta_1}\\0 & 1 & 0 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
 	^2A_3 =
-	\left[\begin{matrix}c_{\theta_2} & 0 & s_{\theta_2} & a_{3} c_{\theta_2}\\s_{\theta_2} & 0 & - c_{\theta_2} & a_{3} s_{\theta_2}\\0 & 1 & 0 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
+	\left[\begin{matrix}c_{\theta_2} & - s_{\theta_2} & 0 & a_{3} c_{\theta_2}\\s_{\theta_2} & c_{\theta_2} & 0 & a_{3} s_{\theta_2}\\0 & 0 & 1 & d_{2}\\0 & 0 & 0 & 1\end{matrix}\right];
 	\\
 	^3A_4 &=& 
 	\left[\begin{matrix}c_{\theta_3} & - s_{\theta_3} & 0 & a_{4} c_{\theta_3}\\s_{\theta_3} & c_{\theta_3} & 0 & a_{4} s_{\theta_3}\\0 & 0 & 1 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
 	^4A_5 =
-	\left[\begin{matrix}c_{\theta_4} & - s_{\theta_4} & 0 & 0\\s_{\theta_4} & c_{\theta_4} & 0 & 0\\0 & 0 & 1 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
+	 \left[\begin{matrix}c_{\theta_4} & 0 & s_{\theta_4} & 0\\s_{\theta_4} & 0 & - c_{\theta_4} & 0\\0 & 1 & 0 & 0\\0 & 0 & 0 & 1\end{matrix}\right];
 	^5A_6 =
-	 \left[\begin{matrix}c_{\theta_5} & 0 & s_{\theta_5} & 0\\s_{\theta_5} & 0 & - c_{\theta_5} & 0\\0 & 1 & 0 & d_{6}\\0 & 0 & 0 & 1\end{matrix}\right]
+	\left[\begin{matrix}c_{\theta_5} & - s_{\theta_5} & 0 & 0\\s_{\theta_5} & c_{\theta_5} & 0 & 0\\0 & 0 & 1 & d_{6}\\0 & 0 & 0 & 1\end{matrix}\right]
 \end{align*}
 
 Таким образом, для любого вектора $q$, позьзуясь выражением~\eqref{fk} и ДХ-параметрами маниплятора, можно определить однозначное положение и ориентацию схвата манипулятора в пространстве.
@@ -184,12 +184,108 @@ R_{3 \times 3} & p_{3 \times 1}\\
 Из приведенного примера следует, что ДХ-параметры и матрицы трансформации найдены верно.
 
 \subsubsection{Обратная задача кинематики}\label{part_kinematics_inverse}
+\if 0
+% удалтить
 Обратную задачу кинематики представим, как функцию $g = f^{-1}$, представляющую переход из рабочего в конфигурационное пространство:
 \begin{equation}
 q = g(x) = f^{-1}(x)
 \end{equation}
 где $x \in \mathbb{R}^6$ --- рабочее пространство, $q \in \mathbb{R}^5$ --- конфигурационное пространство манипулятора.
+\fi
 
+\begin{equation}\label{ik}
+	^0T_6 = ^0A_1 \cdot ^1A_2 \cdot ^2A_3 \cdot ^3A_4 \cdot ^4A_5 \cdot ^5A_6
+\end{equation}
+где $^0T_6$~--- матрица задающая положение и ориентацию схвата в пространстве относительно базовой системы координат.
+
+Заданная матрица:
+\begin{equation}
+	^0T_6 = 
+	\left[\begin{matrix}r_{11} & r_{12} & r_{13} & p_{x}\\r_{21} & r_{22} & r_{23} & p_{y}\\r_{31} & r_{32} & r_{33} & p_{z}\\0 & 0 & 0 & 1\end{matrix}\right]
+\end{equation}
+
+Уравнение~\eqref{ik} домножим с обеих сторон на $(^0A_1 \cdot ^1A_2)^{-1}$ и получим выражение:
+\begin{equation}
+	(^0A_1 \cdot ^1A_2)^{-1} \cdot ^0T_6 = ^2A_3 \cdot ^3A_4 \cdot ^4A_5 \cdot ^5A_6
+\end{equation}
+\begin{equation}
+^2T_6 = (^0A_2)^{-1} \cdot ^0T_6 = ^2A_6
+\end{equation}
+
+В матричном виде:
+\begin{align*}
+	^2T_6 &= 
+	\left[\begin{matrix}
+		r_{11} c_{1} + r_{21} s_{1} & r_{12} c_{1} + r_{22} s_{1} & r_{13} c_{1} + r_{23} s_{1} & - a_{2} + p_{x} c_{1} + p_{y} s_{1}\\
+		r_{31} & r_{32} & r_{33} & - d_{1} - d_{2} + p_{z}\\
+		r_{11} s_{1} - r_{21} c_{1} & r_{12} s_{1} - r_{22} c_{1} & r_{13} s_{1} - r_{23} c_{1} & p_{x} s_{1} - p_{y} c_{1}\\
+		0 & 0 & 0 & 1\end{matrix}\right]\\
+	^2A_6 &=
+	\left[\begin{matrix}
+		c_{5} c_{234} & - s_{5} c_{234} & s_{234} & a_{3} c_{2} + a_{4} c_{23} + d_{6} s_{234}\\
+		s_{234} c_{5} & - s_{5} s_{234} & - c_{234} & a_{3} s_{2} + a_{4} s_{23} - d_{6} c_{234}\\
+		s_{5} & c_{5} & 0 & 0\\
+		0 & 0 & 0 & 1
+	\end{matrix}\right]
+\end{align*}
+
+Из равенства элементов $(3,4)$ матриц: 
+\begin{equation}
+	p_{x} s_{1} - p_{y} c_{1} = 0
+\end{equation}
+
+Найдем $\theta_1$:
+\begin{equation}
+	\theta_1 = Atan2(p_y, p_x)
+\end{equation}
+
+Из равенств элементов $(3,1)$ и $(3,2)$:
+\begin{align*}
+	s_{5} = r_{11} s_{1} - r_{21} c_{1},\\
+	c_{5} =  r_{12} s_{1} - r_{22} c_{1}
+\end{align*}
+
+Вычислим $\theta_5$:
+\begin{equation}
+	\theta_5 = Atan2(r_{11} s_{1} - r_{21} c_{1}, r_{12} s_{1} - r_{22} c_{1})
+\end{equation}
+
+Из равенств элементов $(2,3)$ и $(1,3)$:
+\begin{align*}
+	- c_{234} &= r_{33},\\
+	s_{234} &= r_{13} c_{1} + r_{23} s_{1}
+\end{align*}
+
+Вычислим $\theta_{234}$:
+\begin{equation}
+	\theta_{234} = Atan2(r_{13} c_{1} + r_{23} s_{1}, -r_{33}) 
+\end{equation}
+
+Далее применим геометрический подход.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\textwidth]{ik_geometric_approach.pdf}
+	\caption{Плоская часть манипулятора}
+	\label{ik_geometric}
+\end{figure}
+
+\begin{equation}
+	\cos{\theta_3} = \frac{p_x^2 + p_y^2 + p_z^2 - l_2^2 - l_3^2}{2 l_2 l_3}
+\end{equation}
+
+\begin{equation}
+	\theta_3 = Atan2(\sqrt{1 - \cos^2{\theta_3}}, \cos{\theta_3})
+\end{equation}
+
+Из рисунка видно что $\theta_2 = -\phi - \beta$ или
+\begin{equation}
+	\theta_2 = -Atan2(p_z, \sqrt{p_x^2 + p_y^2}) - Atan2(l_3 \sin{\theta_3}, l_2 + l_3 \cos{\theta_3})
+\end{equation}
+
+И, наконец:
+\begin{equation}
+	\theta_4 = \theta_{234} - \theta_{2} - \theta_{3}
+\end{equation}
 
 
 
