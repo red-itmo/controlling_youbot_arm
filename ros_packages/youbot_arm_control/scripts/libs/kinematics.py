@@ -16,14 +16,6 @@ class Kinematics:
         self.d = d
         self.theta = theta
 
-    def round_rad(self, ang):
-        eps = 0.00001
-        for i in range(0, len(ang)):
-            for j in range(0, len(ang[i])):
-                if -eps < ang[i, j] < eps:
-                    ang[i, j] = 0#round((ang[i, j]), 3)
-        return ang
-
     def set_dh_parameters(self, a, alpha, d, theta):
         self.a = a
         self.alpha = alpha
@@ -40,6 +32,7 @@ class Kinematics:
         return self.theta
 
     def forward(self, qs, f=0, t=6):
+        """ FK problem """
         h = tt.identity_matrix()
         for i in range(f, t):
             rz = tt.rotation_matrix(qs[i] + self.theta[i], (0, 0, 1))
@@ -58,9 +51,10 @@ class Kinematics:
 
     def getProjectionH(self, t):
         """
-        a method of projection a given general goal orientation
-            into the subspace of KUKAYoubot' arm
+            a method of projection a given general goal orientation
+                into the subspace of KUKAYoubot' arm
         """
+        # TODO don't work :(
         # divide T(4x4) matrix of R(3x3) and vector p(3x1)
         px, py, pz = t[:3, 3]
         r = t[:3, :3]
@@ -68,7 +62,8 @@ class Kinematics:
         xt, yt, zt = r[:3, 0], r[:3, 1], r[:3, 2]
         # normal vector to plane of the manipulator
         pxy = sqrt(px ** 2 + py ** 2)
-        m = dot(1 / pxy, [-py, px, 0])
+        #m = dot(1 / pxy, [-py, px, 0])
+        m = [0,-1,0]
         # normal vector to both zt and m
         k = cross(zt, m)
         # new vector zt
@@ -86,57 +81,65 @@ class Kinematics:
         return t
 
     def getVector2to4Frame(self, q1, pr, p):
+        """ the vector for solving geometric part of IK """
         px, py, pz = p
         c1, s1 = cos(q1), sin(q1)
         px24 = px * c1 + py * s1 - self.d[5] * (pr[0, 2] * c1 + pr[1, 2] * s1) - self.a[1]
         py24 = px * s1 - py * c1 - self.d[5] * (pr[0, 2] * s1 - pr[1, 2] * c1)
-        # py24 = px * s1 - py * c1 - self.d[5] * pr[0, 2] * s1 + self.d[5] * pr[1, 2] * c1
         pz24 = pz - self.d[0] - self.d[1] - self.d[5] * pr[2, 2]
         return px24, py24, pz24
 
-    def inverse(self, xyz, rpy, t):
+    def inverse(self, xyz, rpy, t=None):
+        """ IK problem"""
         eps = np.finfo(np.float).eps
-        qs = np.zeros(20).reshape(4, 5)
-        t = self.getProjectionH(t)
+        qs = np.zeros(10).reshape(2, 5)
+
+        # The transformation matrix t is 4x4
+        # need for projection method
+        t = tt.euler_matrix(rpy[0], rpy[1], rpy[2])
+        t[:3, 3] = xyz
+        # TODO don't work
+        # t = self.getProjectionH(t)
+
         px, py, pz = t[:3, 3]
         pr = t[:3, :3]
 
         # theta_1
-        qs[0][0] = qs[1][0] = atan2(py, px)*0
-        qs[2][0] = qs[3][0] = pi + atan2(py, px)
+        qs[0][0] = qs[1][0] = atan2(py, px)
 
         # theta_3
         # cosine theorem
         px24, py24, pz24 = self.getVector2to4Frame(qs[0][0], pr, [px, py, pz])
-        px24 -= eps # for singulars -pi for q2
+        px24 -= eps     # for singulars -pi for q2
         numerator_0 = px24**2 + py24**2 + pz24**2 - self.a[2]**2 - self.a[3]**2
         denominator_0 = 2 * self.a[2] * self.a[3]
-        # for singulars +-pi/2 and +- pi plusing 100 * eps with sign of numerator
+        # for singulars \pm pi/2 and \pm pi plus 100 * eps with sign of numerator
         cosq3_0 = numerator_0 / denominator_0 - np.sign(numerator_0) * 100 * eps
         if cosq3_0 <= 1:
             qs[0][2] = atan2(-sqrt(1.0 - cosq3_0 ** 2), cosq3_0)
             qs[1][2] = atan2(sqrt(1.0 - cosq3_0 ** 2), cosq3_0)
+
+            # theta_2
+            beta0 = (atan2(self.a[3] * sin(qs[0][2]), self.a[2] + self.a[3] * cos(qs[0][2])))
+            phi_0 = -(np.sign(px24)) * atan2(sqrt(px24 ** 2 + py24 ** 2), pz24)
+            qs[0][1] = phi_0 - beta0
+            qs[1][1] = phi_0 + beta0
+            # theta_4
+            s234_0 = pr[0, 2] * cos(qs[0][0]) + pr[1, 2] * sin(qs[0][0])
+            c234 = pr[2, 2]
+            q234_0 = atan2(s234_0, c234) - pi/2
+            qs[0][3] = -q234_0 - qs[0][1] - qs[0][2]
+            qs[1][3] = -q234_0 - qs[1][1] - qs[1][2]
+
+            # theta_5
+            s5_0 = pr[0, 0] * sin(qs[0][0]) - pr[1, 0] * cos(qs[0][0])
+            c5_0 = pr[0, 1] * sin(qs[0][0]) - pr[1, 1] * cos(qs[0][0])
+            qs[0][4] = atan2(s5_0, c5_0)
+            qs[1][4] = atan2(s5_0, c5_0)
         else:
             print("NO SOLUTIONS-")
             print("cosq3: %.20f" % cosq3_0)
-
-        # theta_2
-        beta0 = (atan2(self.a[3] * sin(qs[0][2]), self.a[2] + self.a[3] * cos(qs[0][2])))
-        phi_0 = -(np.sign(px24)) * atan2(sqrt(px24 ** 2 + py24 ** 2), pz24)
-        qs[0][1] = phi_0 - beta0
-        qs[1][1] = phi_0 + beta0
-        # theta_4
-        s234_0 = pr[0, 2] * cos(qs[0][0]) + pr[1, 2] * sin(qs[0][0])
-        c234 = pr[2, 2]
-        q234_0 = atan2(s234_0, c234) - pi/2
-        qs[0][3] = -q234_0 - qs[0][1] - qs[0][2]
-        qs[1][3] = -q234_0 - qs[1][1] - qs[1][2]
-
-        # theta_5
-        s5_0 = pr[0, 0] * sin(qs[0][0]) - pr[1, 0] * cos(qs[0][0])
-        c5_0 = pr[0, 1] * sin(qs[0][0]) - pr[1, 1] * cos(qs[0][0])
-        qs[0][4] = atan2(s5_0, c5_0)
-        qs[1][4] = atan2(s5_0, c5_0)
+            return 0
         return qs
 
 

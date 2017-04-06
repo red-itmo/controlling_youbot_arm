@@ -1,0 +1,6 @@
+<launch>
+	<param name="use_gui" value="true"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find youbot_arm_control)/urdf/youbot_arm_only_dh.urdf.xacro'"/>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find youbot_arm_control)/rviz/youbot_arm_model_dh.rviz" required="true" />
+</launch>
