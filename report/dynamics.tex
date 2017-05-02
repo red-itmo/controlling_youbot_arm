@@ -69,4 +69,110 @@
         \end{equation}
 \end{itemize}
 
+\subsubsection{Получение уравнений движения методом Эйлера-Лагранжа}
+Потенциальная энергия манипулятора
+\begin{equation}
+    U = -g_0^T \cdot \sum_{i = 1}^5 m_ir^0_{0,\,ci} =
+\end{equation}
+
+Якобианы, устанавливающие в соответствии с формулой
+\begin{equation}
+    v^0_{ci} = J_{vi}\dot{q}, \quad i = \overline{1,5}
+\end{equation}
+связь между линейными скоростями центров масс звеньев и вектором~$\dot{q}$:
+\begin{gather}
+    J_{v1} =
+    \begin{bmatrix}
+        z^0_0 \times \left( r^0_{0,\,c1} - r^0_{0,\,0}\right) & \nv & \nv & \nv & \nv
+    \end{bmatrix}\!\!,
+    \\
+    J_{v2} =
+    \begin{bmatrix}
+        z^0_0 \times \left( r^0_{0,\,c2} - r^0_{0,\,0}\right) & z^0_1 \times \left( r^0_{0,\,c2} - r^0_{0,\,1}\right) & \nv & \nv & \nv
+    \end{bmatrix}\!\!,
+    \\
+    J_{v3} =
+    \begin{bmatrix}
+        z^0_0 \times \left( r^0_{0,\,c3} - r^0_{0,\,0}\right) & z^0_1 \times \left( r^0_{0,\,c3} - r^0_{0,\,1}\right) &
+        z^0_2 \times \left( r^0_{0,\,c3} - r^0_{0,\,2}\right) & \nv & \nv
+    \end{bmatrix}\!\!,
+    \\
+    J_{v4} =
+    \begin{bmatrix}
+        z^0_0 \times \left( r^0_{0,\,c4} - r^0_{0,\,0}\right) \\
+        z^0_1 \times \left( r^0_{0,\,c4} - r^0_{0,\,1}\right) \\
+        z^0_2 \times \left( r^0_{0,\,c4} - r^0_{0,\,2}\right) \\
+        z^0_3 \times \left( r^0_{0,\,c4} - r^0_{0,\,3}\right) \\
+        \nv
+    \end{bmatrix}^T\!\!\!\!\!,
+    \qquad
+    J_{v5} =
+    \begin{bmatrix}
+        z^0_0 \times \left( r^0_{0,\,c5} - r^0_{0,\,0}\right) \\
+        z^0_1 \times \left( r^0_{0,\,c5} - r^0_{0,\,1}\right) \\
+        z^0_2 \times \left( r^0_{0,\,c5} - r^0_{0,\,2}\right) \\
+        z^0_3 \times \left( r^0_{0,\,c5} - r^0_{0,\,3}\right) \\
+        z^0_4 \times \left( r^0_{0,\,c5} - r^0_{0,\,4}\right)
+    \end{bmatrix}^T\!\!\!\!\!,
+\end{gather}
+где $\nv = [0\;0\;0]^T$~--- нулевой вектор.
+
+Якобианы, устанавливающие в соответствии с формулой
+\begin{equation}
+    \omega^0_{ci} = J_{\omega i}\dot{q}, \quad i = \overline{1,5}
+\end{equation}
+связь между угловыми скоростями звеньев и вектором~$\dot{q}$:
+\begin{gather}
+    J_{\omega 1} =
+    \begin{bmatrix}
+        z^0_0 & \nv & \nv & \nv & \nv
+    \end{bmatrix}\!\!,
+    \qquad
+    J_{\omega 2} =
+    \begin{bmatrix}
+        z^0_0 & z^0_1 & \nv & \nv & \nv
+    \end{bmatrix}\!\!,
+    \\
+    J_{\omega 3} =
+    \begin{bmatrix}
+         z^0_0 & z^0_1 & z^0_2 & \nv & \nv
+    \end{bmatrix}\!\!,
+    \qquad
+    J_{\omega 4} =
+    \begin{bmatrix}
+        z^0_0 & z^0_1 & z^0_2 & z^0_3 & \nv
+    \end{bmatrix}\!\!,
+    \\
+    J_{\omega 5} =
+    \begin{bmatrix}
+        z^0_0 & z^0_1 & z^0_2 & z^0_3 & z^0_4
+    \end{bmatrix}\!\!\ldotp
+\end{gather}
+
+Кинетическая энергия манипулятора:
+\begin{equation}
+    K = \frac{1}{2}\, \dot{q}^T \left( \sum_{i=1}^5 \left( m_i J_{vi}^T J_{vi} + J_{\omega i}^T \, {}^0\!R_i \, \mathcal{I}^{ci}_i \, {}^0\!R_i^T J_{\omega i} \right) \right) \dot{q} =
+\end{equation}
+
+Функция Лагранжа
+\begin{equation}
+    L = K - U\ldotp
+\end{equation}
+
+Уравнения движения робота:
+\begin{equation}
+    \frac{d}{dt}\frac{\partial L}{\partial\dot{q_i}} - \frac{\partial L}{\partial q_i} = \tau_i, \quad i = \overline{1,5} \qquad \Rightarrow
+\end{equation}
+\begin{equation}
+    \Rightarrow \quad
+	\left\{
+	\begin{aligned}
+		\!& = \tau_1\\
+		\!& = \tau_2\\
+		\!& = \tau_3\\
+		\!& = \tau_4\\
+		\!& = \tau_5
+	\end{aligned}
+	\right.
+\end{equation}
 \newpage

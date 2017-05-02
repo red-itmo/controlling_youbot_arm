@@ -135,7 +135,7 @@
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.2\textwidth]{kinematics_check.pdf}
-	\caption{Конфигурация манипулятора при $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right] = \left[0,\,0,\,0,\,\pi/2,\,0\right]$.}
+	\caption{Конфигурация манипулятора при $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right]^T = \left[0,\,0,\,0,\,\pi/2,\,0\right]^T$.}
 	\label{kinematics_check}
 \end{figure}
 
@@ -327,7 +327,7 @@ p_x s_1 - p_y c_1 - d_5(r_{13} s_1 - r_{23} c_1) = 0\ldotp
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\textwidth]{ik_geometric_approach.pdf}
+	\includegraphics[width=0.65\textwidth]{ik_geometric_approach.pdf}
 	\caption{Плоская часть манипулятора}
 	\label{ik_geometric}
 \end{figure}
@@ -364,27 +364,27 @@ C~учетом этого для $\theta_3$ можно получить след
 	\theta_4^\msf{III,IV} = \theta_{234}^\msf{II} - \theta_{2}^\msf{III, IV} - \theta_{3}^\msf{III,IV}\ldotp
 \end{equation}
 
-Таким образом, любые положение и ориентацию схвата относительно основания манипулятор может обеспечить 4-мя собственными конфигурациями, которым соответствуют следующие наборы значений для его обобщенных координат $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right]$ (с~учетом таблицы~\ref{table_DH_params}):
+Таким образом, любые положение и ориентацию схвата относительно основания манипулятор может обеспечить 4-мя собственными конфигурациями, которым соответствуют следующие наборы значений для его обобщенных координат $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right]^T$ (с~учетом таблицы~\ref{table_DH_params}):
 \begin{align}
 	q^\msf{I} &=
 	\begin{bmatrix}
 	    \theta_1^\msf{I} & \theta_2^\msf{I} - \cfrac{\pi}{2} & \theta_3^\msf{I} & \theta_4^\msf{I} & \theta_5^\msf{I}
-	\end{bmatrix}\!\!,
+	\end{bmatrix}^T\!\!\!\!\!,
 	&
 	q^\msf{II} &=
 	\begin{bmatrix}
 	    \theta_1^\msf{I} & \theta_2^\msf{II} - \cfrac{\pi}{2} & \theta_3^\msf{II} & \theta_4^\msf{II} & \theta_5^\msf{I}
-	\end{bmatrix}\!\!,
+	\end{bmatrix}^T\!\!\!\!\!,
 	\\
 	q^\msf{III} &=
 	\begin{bmatrix}
 	    \theta_1^\msf{II} & \theta_2^\msf{III} - \cfrac{\pi}{2} & \theta_3^\msf{III} & \theta_4^\msf{III} & \theta_5^\msf{II}
-	\end{bmatrix}\!\!,
+	\end{bmatrix}^T\!\!\!\!\!,
 	&
 	q^\msf{IV} &=
 	\begin{bmatrix}
 	    \theta_1^\msf{II} & \theta_2^\msf{IV} - \cfrac{\pi}{2} & \theta_3^\msf{IV} & \theta_4^\msf{IV} & \theta_5^\msf{II}
-	\end{bmatrix}\!\!\ldotp
+	\end{bmatrix}^T\!\!\!\!\!\ldotp
 \end{align}
 
 \newpage
