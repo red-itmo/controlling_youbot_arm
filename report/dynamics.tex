@@ -262,7 +262,7 @@ $\xi$~--- так называемый регрессор, равный
 
 В~качестве модели трения возьмем поясняемую рисунком~\ref{img_friction_torque} и описываемую следующим уравнением
 \begin{equation}\label{eq_friction_torque}
-    \tau_f = f_v \dot{q} + f_c \sign(\dot{q}) + f_\text{off},
+    \tau_f(\dot{q}) = f_v \dot{q} + f_c \sign(\dot{q}) + f_\text{off},
 \end{equation}
 где $f_v$, $f_c$~--- диагональные матрицы коэффициентов вязкого и сухого трения соответственно, $f_\text{off}$~--- вектор-столбец сдвигов в моментах силы, имеющие вид
 \begin{equation}
@@ -328,4 +328,16 @@ $\xi$~--- так называемый регрессор, равный
 \begin{equation}\label{eq_extended_dynamic_in_linear}
     \tau_e = \bar\xi \bar\chi \ldotp
 \end{equation}
+
+\subsubsection{Альтернативная матричная форма записи}
+Выражение~\eqref{eq_dynamic_in_linear} может быть переписано в форме
+\begin{equation}
+    \tau = D(q) \ddot{q} + C(q,\dot{q}) \dot{q} + G(q),
+\end{equation}
+где $D(q)$~--- матрица инерции, $C(q,\dot{q})$~--- матрица центробежных и Кориолисовых сил, $G(q)$~--- вектор гравитации.
+С~учетом этого факта и уравнения~\eqref{eq_eqs_with_tau_f} можно получить, что
+\begin{equation}
+    \tau_e = M(q) \ddot{q} + C(q,\dot{q}) \dot{q} + G(q) + t_f(\dot{q}),
+\end{equation}
+где $M(q) = I_a + D(q)$.
 \newpage
