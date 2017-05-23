@@ -202,7 +202,7 @@
 	\right.
 \end{equation}
 или в матричном виде
-\begin{equation}
+\begin{equation}\label{eq_dynamic_in_linear}
     \tau = \xi \chi,
 \end{equation}
 где $\tau = [\tau_1, \: \tau_2, \: \ldots, \: \tau_5]^T$~--- вектор обобщенных моментов,\\ $\chi=[\chi_1, \: \chi_2, \: \ldots, \: \chi_5]^T \in \mathbb R^{50}$~--- вектор параметров робота, где в свою очередь
@@ -228,5 +228,104 @@ $\xi$~--- так называемый регрессор, равный
     \begin{bmatrix}
         \mathcal{L}_j \{L_{i,1}\} & \mathcal{L}_j \{L_{i,2}\} & \ldots & \mathcal{L}_j \{L_{i,10}\}
     \end{bmatrix}\!\!\ldotp
+\end{equation}
+
+\subsubsection{Учет динамики приводов}
+Уравнения, описывающие динамику приводов, в матричном виде имеют вид
+\begin{equation}\label{eq_actuators_dynamic}
+    I_a \ddot{q} = \tau_e - \tau,
+\end{equation}
+где $I_a$~--- диагональная матрица приведенных к выходным валам моментов инерции приводов, $\tau_e$~--- вектор-столбец приведенных к выходным валам приводов моментов силы, развиваемых двигателями, имеющие вид:
+\begin{equation}
+    I_a =
+    \begin{bmatrix}
+        I_{a,1} & 0 & \cdots & 0 \\
+        0 & I_{a,2} & \cdots & 0 \\
+        \vdots & \vdots & \ddots & 0 \\
+        0 & 0 & \cdots & I_{a,5}
+    \end{bmatrix}\!\!,
+    \qquad \qquad
+    \tau_e =
+    \begin{bmatrix}
+        \tau_{e,1} \\ \tau_{e,2} \\ \vdots \\ \tau_{e,5}
+    \end{bmatrix}\!\!\ldotp
+\end{equation}
+
+Объединяя уравнения~\eqref{eq_dynamic_in_linear} и~\eqref{eq_actuators_dynamic}, получим
+\begin{equation}
+    \tau_e = I_a \ddot{q} + \xi \chi,
+\end{equation}
+а, добавив в это выражение учет моментов трения, окончательно будем иметь
+\begin{equation}\label{eq_eqs_with_tau_f}
+    \tau_e = I_a \ddot{q} + \xi \chi + t_f \ldotp
+\end{equation}
+
+В~качестве модели трения возьмем поясняемую рисунком~\ref{img_friction_torque} и описываемую следующим уравнением
+\begin{equation}\label{eq_friction_torque}
+    \tau_f = f_v \dot{q} + f_c \sign(\dot{q}) + f_\text{off},
+\end{equation}
+где $f_v$, $f_c$~--- диагональные матрицы коэффициентов вязкого и сухого трения соответственно, $f_\text{off}$~--- вектор-столбец сдвигов в моментах силы, имеющие вид
+\begin{equation}
+    f_v =
+    \begin{bmatrix}
+        f_{v,1} & 0 & \cdots & 0 \\
+        0 & f_{v,2} & \cdots & 0 \\
+        \vdots & \vdots & \ddots & 0 \\
+        0 & 0 & \cdots & f_{v,5}
+    \end{bmatrix}\!\!,
+    \quad
+    f_c =
+    \begin{bmatrix}
+        f_{c,1} & 0 & \cdots & 0 \\
+        0 & f_{c,2} & \cdots & 0 \\
+        \vdots & \vdots & \ddots & 0 \\
+        0 & 0 & \cdots & f_{c,5}
+    \end{bmatrix}\!\!,
+    \quad
+    f_\text{off} =
+    \begin{bmatrix}
+        f_{\text{off},1} \\ f_{\text{off},2} \\ \vdots \\ f_{\text{off},5}
+    \end{bmatrix}\!\!\ldotp
+\end{equation}
+
+\begin{figure}[h!]
+	\centering\includegraphics[width=0.7\textwidth]{friction_torque.pdf}
+	\caption{График, поясняющий выбранную модель трения.}
+	\label{img_friction_torque}
+\end{figure}
+
+Подставляя~\eqref{eq_friction_torque} в~\eqref{eq_eqs_with_tau_f}, получим
+\begin{equation}
+     \tau_e = I_a \ddot{q} + \xi \chi + f_v \dot{q} + f_c \sign(\dot{q}) + f_\text{off}\ldotp
+\end{equation}
+Если ввести в рассмотрение новые матрицы $\bar{\chi}=[\bar{\chi}_1, \: \bar\chi_2, \: \ldots, \: \bar\chi_5]^T$ и\linebreak
+\begin{equation}
+    \bar\xi =
+    \begin{bmatrix}
+        \bar\xi_{1,1} & \bar\xi_{1,2} & \cdots & \bar\xi_{1,5} \\
+        O_{1 \times 10} & \bar\xi_{2,2} & \cdots & \bar\xi_{2,5} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        O_{1 \times 10} & O_{1 \times 10} & O_{1 \times 10} & \bar\xi_{5,5}
+    \end{bmatrix}\!\!,
+\end{equation}
+определяемые выражениями
+\begin{equation}
+    \bar{\chi}_i =
+    \begin{bmatrix}
+        \chi_i & I_{a,i} & f_{v,i} & f_{c,i} & f_{\text{off},i}
+    \end{bmatrix}^T\!\!\!\!,
+\end{equation}
+\begin{equation}
+    \bar{\xi}_{j,i} =
+    \left\{
+    \begin{aligned}
+        \!\begin{bmatrix}\xi_{j,i} & 0 & 0 & 0 & 0\end{bmatrix}&, && i \ne j \\
+        \!\begin{bmatrix}\xi_{j,i} & \ddot{q} & \dot{q} & \sign(\dot{q}) & 1\end{bmatrix}&, &&i = j
+	\end{aligned}
+	\right.
+\end{equation}
+то данное выражение может быть записано в следующем матричном виде:
+\begin{equation}\label{eq_extended_dynamic_in_linear}
+    \tau_e = \bar\xi \bar\chi \ldotp
 \end{equation}
 \newpage
