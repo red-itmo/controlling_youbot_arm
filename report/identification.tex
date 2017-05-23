@@ -1,0 +1,39 @@
+\section{Идентификация параметров манипулятора}\label{part_identification}
+\subsection{Описание метода}
+Для определения неизвестных значений параметров робота, составляющих вектор $\bar\chi$, воспользуемся методом наименьших квадратов.
+Алгоритм необходимых действий в таком случае будет следующим:
+\begin{enumerate}
+    \item с помощью поставляемого производителем робота ПО\footnote{У~Youbot такое <<стандартное>> ПО осуществляет управление углами в сочленениях робота с помощью ПИД-регуляторов.} дать манипулятору команды на последовательное достижение $N$ произвольных конфигураций, по возможности охватывающих всю его рабочую область; во время его работы снять и записать следующие показания:
+        \begin{align*}
+            &q(t_1) &&\dot{q}(t_1) &&\ddot{q}(t_1) && \tau_e(t_1) \\
+            &q(t_2) &&\dot{q}(t_2) &&\ddot{q}(t_2) && \tau_e(t_2) \\
+            &q(t_3) &&\dot{q}(t_3) &&\ddot{q}(t_3) && \tau_e(t_3) \\
+            &\ldots &&\ldots &&\ldots && \ldots \\
+            &q(t_{k}) &&\dot{q}(t_k) &&\ddot{q}(t_k) && \tau_e(t_k)
+        \end{align*}
+        где $t_k>t_3>t_2>t_1$;
+    \item используя полученные данные, составить матрицы
+        \begin{equation}
+            \Xi =
+            \begin{bmatrix}
+                \bar\xi(\ddot{q}(t_1), \dot{q}(t_1), q(t_1)) \\
+                \bar\xi(\ddot{q}(t_2), \dot{q}(t_2), q(t_2)) \\
+                \ldots \\
+                \bar\xi(\ddot{q}(t_k), \dot{q}(t_k), q(t_k))
+            \end{bmatrix}\!\!,
+            \qquad
+            T_e =
+            \begin{bmatrix}
+                \tau_e(t_1) \\ \tau_e(t_2) \\ \ldots \\ \tau_e(t_k)
+            \end{bmatrix}\!\!;
+        \end{equation}
+    \item \label{item_estimate}рассчитать оценку $\hat{\chi}$ вектора $\bar\chi$ по формуле:
+        \begin{equation}
+            \hat\chi = ( \Xi^T \!\!\cdot \Xi)^{-1} \cdot \Xi^T \cdot T_e;
+        \end{equation}
+    \item \label{item_second_data}дать роботу команды на достижение других $N$ позиций и при этом получить те же самые данные;
+    \item используя найденную в п.~\ref{item_estimate}) оценку $\hat{\chi}$ и снятые в п.~\ref{item_second_data}) данные, рассчитать по формуле~\eqref{eq_extended_dynamic_in_linear} значения для $\tau_e$; сравнить их c полученными в п.~\ref{item_second_data}) и сделать выводы об успешности идентификации.
+\end{enumerate}
+
+\subsection{Результаты}
+\newpage
