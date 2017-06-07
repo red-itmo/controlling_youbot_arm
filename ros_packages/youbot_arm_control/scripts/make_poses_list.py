@@ -36,13 +36,12 @@ def show_poses_callback(req):
     msg.name = ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5', 'gripper_finger_joint_l', 'gripper_finger_joint_r']
     msg.position = [0.01]*7;
 
-    config_file = open(file_name, "r")
-    pose = config_file.readline()
-    angles_start = [float(angle) for angle in pose.split()]
+    angles_start = [0.0]*5
     msg.position[:5] = angles_start
     js_pub.publish(msg)
     rospy.sleep(1.0)
 
+    config_file = open(file_name, "r")
     pose = config_file.readline()
     while bool(pose):
         angles_final = [float(angle) for angle in pose.split()]
