@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find youbot_description)/robots/youbot_arm_only.urdf.xacro'"/>
+
+     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="true"/>
+        <rosparam param="source_list">["poses/joint_states"]</rosparam>
+    </node>
+
+    <node name="make_poses_list_node" pkg="youbot_arm_control" type="make_poses_list.py">
+        <param name="file_with_poses" value="poses.txt"/>
+    </node>
+
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find youbot_arm_control)/rviz/youbot_arm_model.rviz"/>
+
+</launch>
