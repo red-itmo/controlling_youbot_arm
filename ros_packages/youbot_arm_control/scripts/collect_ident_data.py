@@ -13,9 +13,10 @@ def js_callback(js_msg):
     angles = ' '.join(str(angle) for angle in js_msg.position[:5])
     omegas = ' '.join(str(omega) for omega in js_msg.velocity[:5])
     torques = ' '.join(str(torque) for torque in js_msg.effort[:5])
+    time = str(js_msg.header.stamp.to_sec())
     lock.acquire()
     cur_angles = js_msg.position[:5]
-    file_with_data.write(angles + ' ' + omegas + ' ' + torques+'\n')
+    file_with_data.write(angles + ' ' + omegas + ' ' + torques + ' ' + time + '\n')
     lock.release()
 
 
@@ -70,7 +71,7 @@ if __name__=="__main__":
     fwp_name = rospy.get_param("~file_with_poses", "poses.txt")
     fwd_name = rospy.get_param("~file_with_data", "data.txt")
 
-    file_with_data = open(fwd_name, "a")
+    file_with_data = open(fwd_name, "w")
 
     make_movements = rospy.Service("make_movements", Empty, make_movements_callback)
 
