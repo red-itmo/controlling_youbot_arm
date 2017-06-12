@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="collect_ident_data_node" pkg="youbot_arm_control" type="collect_ident_data.py">
+        <param name="file_with_poses" value="poses.txt"/>
+        <param name="file_with_data" value="data.txt"/>
+    </node>
+
+</launch>
