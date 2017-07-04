@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 import rospy
-import math, scipy
+import math
+
 # from youbot_arm_control.msg import DecartTrajectory
 from geometry_msgs.msg import PolygonStamped
-from geometry_msgs.msg import Polygon
 from geometry_msgs.msg import Point32
 
 from geometry_msgs.msg import PoseArray
@@ -16,55 +16,57 @@ class Drawer:
 
     def __init__(self):
         # self.sub = rospy.Subscriber("decart_trajectory", DecartTrajectory, self.drawme)
-        self.pubPolygon = rospy.Publisher("my_traj_polygon", PolygonStamped, queue_size=1)
+        self.pubPolygon = rospy.Publisher("my_traj_polygon", PolygonStamped, queue_size=10)
         self.pubPoseArray = rospy.Publisher("my_traj_pose", PoseArray, queue_size=1)
 
-        self.h = 0
+        self.height_test = 0
+        self.frame = 'frame_drawer'
+        self.points = []
+        self.poses = []
         self.loop()
 
-    def drawme(self, point):
-        polygon = Polygon([point])
-        msg = PolygonStamped()
-        msg.polygon = polygon
-        self.pub.publish(msg)
-
     def getXYZ(self):
-        u, h = 10, 3
-        x = u * math.cos(self.h)
-        y = u * math.sin(self.h)
-        z = h * self.h
-        if self.h > 1000000000:
-            self.h = 0
-        self.h += 0.001
-        print(self.h)
-        return x, y, z
+        """ only for test"""
+        x, y, z = math.sin(self.height_test), \
+                  math.cos(self.height_test), \
+                  0.042 * self.height_test
+        self.height_test += 0.1
+        o = math.sin(self.height_test), math.cos(self.height_test), 0, 1
+        return x, y, z, o
 
-    def drawPolygon(self):
-        x, y, z = self.getXYZ()
-        points = []
-        cur_point = Point32(x, y, z)
-        points.append(cur_point)
-        pol = Polygon()
-        pol.points = points
+    def drawPolygon(self, point):
+        x, y, z = point
+        self.points.append(Point32(x, y, z))
+        # fill msg
         msg = PolygonStamped()
-        msg.polygon = pol
+        msg.polygon.points = self.points
         msg.header.stamp = rospy.Time.now()
-        msg.header.frame_id = 'g'
+        msg.header.frame_id = self.frame
         self.pubPolygon.publish(msg)
 
-    def drawPose(self):
-        x, y, z = self.getXYZ()
+    def drawPose(self, point, orientation):
+        x, y, z = point
+        qx, qy, qz, w = orientation
+        pose = Pose()
+        pose.position = Point(x, y, z)
+        pose.orientation = Quaternion(qx, qy, qz, w)
+        self.poses.append(pose)
+        # fill msg
         msg = PoseArray()
-        msg.header.frame_id = 'pose_test'
         msg.header.stamp = rospy.Time.now()
-        msg.poses.append(Point(x, y, z))
+        msg.header.frame_id = self.frame
+        msg.poses = self.poses
         self.pubPoseArray.publish(msg)
 
     def loop(self):
         rospy.init_node('drawer')
-        rate = rospy.Rate(10)  # 10hz
+        rate = rospy.Rate(30)
         while not rospy.is_shutdown():
-            self.drawPolygon()
+            # test draw code
+            x, y, z, o = self.getXYZ()
+            self.drawPolygon((x, y, z))
+            self.drawPose((x, y, z), o)
+
             rate.sleep()
 
 if __name__ == '__main__':

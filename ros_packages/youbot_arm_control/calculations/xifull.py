@@ -6,25 +6,25 @@ import numpy as np
 # from alisa import A, D
 from libs.utils import getZeros
 
-from compute_xi_v2_symple.xi.xi_00 import XI as XI00
-from compute_xi_v2_symple.xi.xi_01 import XI as XI01
-from compute_xi_v2_symple.xi.xi_02 import XI as XI02
-from compute_xi_v2_symple.xi.xi_03 import XI as XI03
-from compute_xi_v2_symple.xi.xi_04 import XI as XI04
+from compute_xi_v3_simp.xi.xi_00 import XI as XI00
+from compute_xi_v3_simp.xi.xi_01 import XI as XI01
+from compute_xi_v3_simp.xi.xi_02 import XI as XI02
+from compute_xi_v3_simp.xi.xi_03 import XI as XI03
+from compute_xi_v3_simp.xi.xi_04 import XI as XI04
 
-from compute_xi_v2_symple.xi.xi_11 import XI as XI11
-from compute_xi_v2_symple.xi.xi_12 import XI as XI12
-from compute_xi_v2_symple.xi.xi_13 import XI as XI13
-from compute_xi_v2_symple.xi.xi_14 import XI as XI14
+from compute_xi_v3_simp.xi.xi_11 import XI as XI11
+from compute_xi_v3_simp.xi.xi_12 import XI as XI12
+from compute_xi_v3_simp.xi.xi_13 import XI as XI13
+from compute_xi_v3_simp.xi.xi_14 import XI as XI14
 
-from compute_xi_v2_symple.xi.xi_22 import XI as XI22
-from compute_xi_v2_symple.xi.xi_23 import XI as XI23
-from compute_xi_v2_symple.xi.xi_24 import XI as XI24
+from compute_xi_v3_simp.xi.xi_22 import XI as XI22
+from compute_xi_v3_simp.xi.xi_23 import XI as XI23
+from compute_xi_v3_simp.xi.xi_24 import XI as XI24
 
-from compute_xi_v2_symple.xi.xi_33 import XI as XI33
-from compute_xi_v2_symple.xi.xi_34 import XI as XI34
+from compute_xi_v3_simp.xi.xi_33 import XI as XI33
+from compute_xi_v3_simp.xi.xi_34 import XI as XI34
 
-from compute_xi_v2_symple.xi.xi_44 import XI as XI44
+from compute_xi_v3_simp.xi.xi_44 import XI as XI44
 
 N_L = 10
 
@@ -42,6 +42,11 @@ class XIFull:
         self.linerCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 20, 28, 31, 32, 42, 44, 45, 46,
                           15, 14]
         # zeros [2, 3, 4, 6, 7, 8, 9]
+
+    def getWellColNums(self):
+        all = set(range(70))
+        well = all.difference(self.linerCols)
+        return list(well)
 
     def getXiNum(self, q, dq, ddq):
         """ :returns Standart not extended regressor 5x50 in numerical form """

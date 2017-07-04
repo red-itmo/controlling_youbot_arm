@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import numpy as np
 import time
+import os
+import re
 
 EPS = 1.e-15
+
 
 def printWastedTime(st, et, dt, title=''):
     prepString = title + '\nStart time: {0}\nEnd time: {1}\nWasted time: {2}'
@@ -11,16 +14,6 @@ def printWastedTime(st, et, dt, title=''):
     delta = time.strftime("%b %d %H:%M:%S", time.localtime(dt - 3600 * 24))  # -3 hours for 1970 year
     wasted = prepString.format(start, end, delta)
     print(wasted)
-
-
-# def rmZeros(xi_l):
-#     n = len(xi_l)
-#     zeros = np.empty(0)
-#     for i in range(n):
-#         if xi_l[i] == 0:
-#             zeros = np.append(zeros, i)
-#     xi_l = np.delete(xi_l, zeros.tolist(), 1)
-#     return xi_l
 
 
 def getZeros(mx):
@@ -45,10 +38,22 @@ def rmZeros(mx):
     mx = np.delete(mx, zeroCols, 1)
     return mx
 
+
+def getDataFileNames(path):
+    for dirname, dirnames, filenames in os.walk(path):
+        return filenames
+
+
+def getFileNamesContains(string, path):
+    fileNames = getDataFileNames(path)
+    wellFileNames = []
+    for fn in fileNames:
+        pat = r'.*' + string + '.*'
+        if re.match(pat, fn) is not None:
+            wellFileNames.append(fn)
+    return wellFileNames
+
 if __name__ == '__main__':
-    a = np.array([[1,2],[3,4],[5,6]])
-    b = np.zeros((3, 1))
-    w = np.concatenate((a,b,b,a,b), 1)
-    print(w)
-    print(getZeros(w))
-    print(rmZeros(w))
+    path = '/media/data/evo/robotics_report/ros_packages/youbot_arm_control/calculations/data_for_identification/bigs/raw'
+    x = getFileNamesContains('', path)
+    print(x)

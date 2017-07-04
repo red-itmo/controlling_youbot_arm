@@ -7,4 +7,4 @@
 *.pyc
 *.backup
 *.idea
-ros_packages/youbot_arm_control/*.txt
+ros_packages/youbot_arm_control/**/*.txt

@@ -18,9 +18,13 @@ class Identification:
 
     def __init__(self, a, d):
         self.xi = XIFull(a, d)
+        self.wellColNums = self.xi.getWellColNums()
         # DH parameters
         self.a = a
         self.d = d
+
+    def getWellColNums(self):
+        return self.wellColNums
 
     def getBigTau(self, taus):
         """
@@ -73,7 +77,7 @@ class Identification:
             xiK = self.xi.getXiNumExCompressed(qs[k], dqs[k], ddqs[k])
             bigXi = np.concatenate((bigXi, xiK), axis=0)
             msgInfo = 'Collecting of bigXi. Progress: {:.2f} %'.format(k * 100. / m)
-            print(msgInfo, end='\n')
+            print(msgInfo, end='\r')
         endTime = time.time()
         printWastedTime(startTime, endTime, startTime - endTime,
                                 'Make big Xi:')
@@ -226,6 +230,44 @@ class Identification:
             fname = fileName.format(i)
             np.savetxt(fname, xiT)
         print('{:d} EE files were generated success!'.format(n))
+
+    def computeDDq(self, dq_prev, dq_next, t_prev, t_next):
+        ddq = []
+        for i in range(5):
+            lim = (dq_next[i] - dq_prev[i]) / (t_next - t_prev)
+            ddq.append(lim)
+        return ddq
+
+    def readIdentDataRaw(self, fileName):
+        """
+        data measures from real manipulator;
+        :return: q, dq, ddq, tau_e -- matrices of vectors
+        """
+        file = open(fileName, 'r')
+        qs, dqs, ddqs, taus, ts = [], [], [], [], []
+        ddqs.append([0., 0., 0., 0., 0.])    # first ddq
+        for i, line in enumerate(file):
+            raw = line.split(' ')
+            q = list(map(float, raw[0:5]))
+            dq = list(map(float, raw[5:10]))
+            tau = list(map(float, raw[10:15]))
+            t = float(raw[15])
+            qs.append(q)
+            dqs.append(dq)
+            taus.append(tau)
+            ts.append(t)
+            if i > 1:
+                dq_prev = dqs[i-2]
+                dq_next = dqs[i]
+                t_prev = ts[i-2]
+                t_next = ts[i]
+                ddq = self.computeDDq(dq_prev, dq_next, t_prev, t_next)
+                ddqs.append(ddq)
+
+        print('data from ' + fileName + ' was read!')
+        file.close()
+        ddqs.append([0, 0, 0, 0, 0])
+        return qs, dqs, ddqs, taus, ts
 
 if __name__ == '__main__':
     path = 'data_for_identification'
