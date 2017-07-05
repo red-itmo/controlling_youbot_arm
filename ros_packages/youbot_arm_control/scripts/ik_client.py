@@ -19,7 +19,7 @@ class IKClient():
             print("Service call failed: %s"%e)
 
     def usage(self):
-        return "%s x y z r p y"%sys.argv[0]
+        return "usage:\n %s x y z r p y" % sys.argv[0]
 
 
 if __name__ == "__main__":

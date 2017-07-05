@@ -29,23 +29,23 @@ class IKServer:
 
         # set orange brick to given coordinate with given orientation
         br = tf.TransformBroadcaster()
-        br.sendTransform(xyz, qtn, rospy.Time.now(), 'test_box', "base_link")
+        br.sendTransform(xyz, qtn, rospy.Time.now(), 'test_box', "ground_link")
 
         # solve IK problem
-        q = self.ks.inverse(xyz, rpy)
-        if type(q) is not int:
+        q, soluts = self.ks.inverse(xyz, rpy)
+        if soluts != [False, False]:
             # !select first solve from two
-            q = q[0]
             rospy.loginfo("found Qs: %s" % str(q))
+            q = q[0]
 
             # publish joint positions
             jointState = JointState()
             jointState.header.stamp = rospy.Time.now()
-            # jointState.name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'finger_joint_l', 'finger_joint_r']
-            jointState.name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5']
+            jointState.name = ['arm_joint_'+ str(i+1) for i in range(5)]
+            jointState.name.extend(['gripper_finger_joint_l', 'gripper_finger_joint_r'])
             jointState.position = q.tolist()
             # add positions for fingers of gripper
-            # jointState.position.extend([0.015, 0.015])
+            jointState.position.extend([0.015, 0.015])
             self.pubJointState.publish(jointState)
             return 1
         return 0
