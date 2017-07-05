@@ -14,7 +14,7 @@
 	\begin{minipage}[h]{0.5\linewidth}
 		\centering{\includegraphics[width=0.95\linewidth]{kinematics_frames.pdf} \\ б)}
 	\end{minipage}
-	\caption{Схемы рассматриваемого манипулятора: а~--- кинематическая при $q_i=0$, $i=\overline{1,5}$; б~--- расположения СК КП.}
+	\caption{Схемы рассматриваемого манипулятора: а~--- кинематическая при $\theta=\left[\theta_1,\,\theta_2,\,\theta_3,\,\theta_4,\,\theta_5\right]^T = \left[0,\,\pi/2,\,0,\,0,\,0\right]^T$; б~--- расположения СК КП.}
 	\label{img:kinematics}
 \end{figure}
 
@@ -107,17 +107,17 @@
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|}
 			\hline
-			Звено 	& $a_i$, мм & $\alpha_i$, рад & $d_i$, мм & $\theta_i$, рад\\
+			Звено, $i$ 	& $a_i$, мм & $\alpha_i$, рад & $d_i$, мм & $\theta_i$, рад\\
 			\hline
-			1  		& $33$ & $\pi/2$ & $147$ & $q_1$\\
+			1  		& $33$ & $\pi/2$ & $147$ & \parbox[c][0.7\height]{4cm}{$$\pi \cdot \cfrac{169^\circ}{180^\circ} - q_1$$}\\
 			\hline
-			2 		& $155$ & $0$ 	& $0$ 	& $q_2 + \pi/2$\\
+			2 		& $155$ & $0$ 	& $0$ & \parbox[c][0.7\height]{4cm}{$$\pi \cdot \cfrac{65^\circ}{180^\circ} + \cfrac{\pi}{2} - q_2$$}\\
 			\hline
-			3 		& $135$ & $0$ 	& $0$ 	& $q_3$\\
+			3 		& $135$ & $0$ 	& $0$ 	& \parbox[c][0.7\height]{4cm}{$$-\pi \cdot \cfrac{146^\circ}{180^\circ} - q_3$$}\\
 			\hline
-			4 		& $0$ & $\pi/2$ & $0$ 	& $q_4$\\
+			4 	& $0$ & $\pi/2$ & $0$ & \parbox[c][0.7\height]{4cm}{$$\pi \cdot \cfrac{102.5^\circ}{180^\circ} + \cfrac{\pi}{2} - q_4$$}\\
 			\hline
-			5 		& $0$ & $0$ 	& $218$ & $q_5$\\
+			5 		& $0$ & $0$ 	& $218$     & \parbox[c][0.7\height]{4cm}{$$\pi \cdot \cfrac{167.5^\circ}{180^\circ} - q_5$$}\\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -134,8 +134,8 @@
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.2\textwidth]{kinematics_check.pdf}
-	\caption{Конфигурация манипулятора при $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right]^T = \left[0,\,0,\,0,\,\pi/2,\,0\right]^T$.}
+	\includegraphics[width=0.25\textwidth]{kinematics_check.pdf}
+	\caption{Конфигурация манипулятора при $\theta=\left[\theta_1,\,\theta_2,\,\theta_3,\,\theta_4,\,\theta_5\right]^T = \left[0,\,\pi/2,\,0,\,\pi/2,\,0\right]^T$.}
 	\label{kinematics_check}
 \end{figure}
 
@@ -327,7 +327,7 @@ p_x s_1 - p_y c_1 - d_5(r_{13} s_1 - r_{23} c_1) = 0\ldotp
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.65\textwidth]{ik_geometric_approach.pdf}
+	\includegraphics[width=0.58\textwidth]{ik_geometric_approach.pdf}
 	\caption{Плоская часть манипулятора}
 	\label{ik_geometric}
 \end{figure}
@@ -366,25 +366,34 @@ C~учетом этого для $\theta_3$ можно получить след
 
 Таким образом, любые положение и ориентацию схвата относительно основания манипулятор может обеспечить 4-мя собственными конфигурациями, которым соответствуют следующие наборы значений для его обобщенных координат $q=\left[q_1,\,q_2,\,q_3,\,q_4,\,q_5\right]^T$ (с~учетом таблицы~\ref{table_DH_params}):
 \begin{align}
-	q^\msf{I} &=
+	\theta^\msf{I} &=
 	\begin{bmatrix}
-	    \theta_1^\msf{I} & \theta_2^\msf{I} - \cfrac{\pi}{2} & \theta_3^\msf{I} & \theta_4^\msf{I} & \theta_5^\msf{I}
+	    \theta_1^\msf{I} & \theta_2^\msf{I} & \theta_3^\msf{I} & \theta_4^\msf{I} & \theta_5^\msf{I}
 	\end{bmatrix}^T\!\!\!\!\!,
 	&
-	q^\msf{II} &=
+	\theta^\msf{II} &=
 	\begin{bmatrix}
-	    \theta_1^\msf{I} & \theta_2^\msf{II} - \cfrac{\pi}{2} & \theta_3^\msf{II} & \theta_4^\msf{II} & \theta_5^\msf{I}
+	    \theta_1^\msf{I} & \theta_2^\msf{II} & \theta_3^\msf{II} & \theta_4^\msf{II} & \theta_5^\msf{I}
 	\end{bmatrix}^T\!\!\!\!\!,
 	\\
-	q^\msf{III} &=
+	\theta^\msf{III} &=
 	\begin{bmatrix}
-	    \theta_1^\msf{II} & \theta_2^\msf{III} - \cfrac{\pi}{2} & \theta_3^\msf{III} & \theta_4^\msf{III} & \theta_5^\msf{II}
+	    \theta_1^\msf{II} & \theta_2^\msf{III} & \theta_3^\msf{III} & \theta_4^\msf{III} & \theta_5^\msf{II}
 	\end{bmatrix}^T\!\!\!\!\!,
 	&
-	q^\msf{IV} &=
+	\theta^\msf{IV} &=
 	\begin{bmatrix}
-	    \theta_1^\msf{II} & \theta_2^\msf{IV} - \cfrac{\pi}{2} & \theta_3^\msf{IV} & \theta_4^\msf{IV} & \theta_5^\msf{II}
-	\end{bmatrix}^T\!\!\!\!\!\ldotp
+	    \theta_1^\msf{II} & \theta_2^\msf{IV} & \theta_3^\msf{IV} & \theta_4^\msf{IV} & \theta_5^\msf{II}
+	\end{bmatrix}^T\!\!\!\!\!,
 \end{align}
+\begin{equation}
+    q^\msf{I,II,III,IV} =
+    \pi \cdot
+    \begin{bmatrix}
+	    \cfrac{169^\circ}{180^\circ} & \cfrac{65^\circ}{180^\circ} + \cfrac{1}{2} & -\cfrac{146^\circ}{180^\circ} &
+	    \cfrac{102.5^\circ}{180^\circ} + \cfrac{1}{2} & \cfrac{167.5^\circ}{180^\circ}
+	\end{bmatrix}^T
+	\!\!- \; \theta^\msf{I,II,III,IV} \ldotp
+\end{equation}
 
 \newpage

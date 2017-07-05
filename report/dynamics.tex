@@ -74,7 +74,7 @@
 
 Якобианы, устанавливающие в соответствии с формулой
 \begin{equation}\label{eq_work_of_lin_jacobians}
-    v^0_{i} = J_{vi}\dot{q}, \quad i = \overline{1,5}
+    v^0_{i} = -J_{vi}\dot{q}, \quad i = \overline{1,5}
 \end{equation}
 связь между линейными скоростями начал соответствующих СК и вектором~$\dot{q}$:
 \begin{gather}
@@ -116,7 +116,7 @@
 
 Якобианы, устанавливающие в соответствии с формулой
 \begin{equation}\label{eq_work_of_ang_jacobians}
-    \omega^0_{i} = J_{\omega i}\dot{q}, \quad i = \overline{1,5}
+    \omega^0_{i} = -J_{\omega i}\dot{q}, \quad i = \overline{1,5}
 \end{equation}
 связь между угловыми скоростями звеньев и вектором~$\dot{q}$:
 \begin{gather}
@@ -197,7 +197,7 @@
 		\!&\sum_{i=1}^5 \bigl( m_i \cdot \mathcal{L}_1 \{L_{i,1}\} + m_i x_{ci} \cdot \mathcal{L}_1 \{L_{i,2}\} + \ldots + I_{i,\,yz} \cdot \mathcal{L}_1 \{L_{i,10}\} \bigr) = \tau_1\\
 		\!&\sum_{i=2}^5 \bigl( m_i \cdot \mathcal{L}_2 \{L_{i,1}\} + m_i x_{ci} \cdot \mathcal{L}_2 \{L_{i,2}\} + \ldots + I_{i,\,yz} \cdot \mathcal{L}_2 \{L_{i,10}\} \bigr) = \tau_2\\
 		\!&\ldots\\
-		\!& m_5 \cdot \mathcal{L}_5 \{L_{5,1}\} + m_5 x_{c5} \cdot \mathcal{L}_5 \{L_{5,2}\} + \ldots + I_{5,\,yz} \cdot \mathcal{L}_5 \{L_{5,10}\} \bigr) = \tau_5
+		\!& m_5 \cdot \mathcal{L}_5 \{L_{5,1}\} + m_5 x_{c5} \cdot \mathcal{L}_5 \{L_{5,2}\} + \ldots + I_{5,\,yz} \cdot \mathcal{L}_5 \{L_{5,10}\} = \tau_5
 	\end{aligned}
 	\right.
 \end{equation}
@@ -320,7 +320,7 @@ $\xi$~--- так называемый регрессор, равный
     \left\{
     \begin{aligned}
         \!\begin{bmatrix}\xi_{j,i} & 0 & 0 & 0 & 0\end{bmatrix}&, && i \ne j \\
-        \!\begin{bmatrix}\xi_{j,i} & \ddot{q} & \dot{q} & \sign(\dot{q}) & 1\end{bmatrix}&, &&i = j
+        \!\begin{bmatrix}\xi_{j,i} & \ddot{q_j} & \dot{q_j} & \sign(\dot{q_j}) & 1\end{bmatrix}&, &&i = j
 	\end{aligned}
 	\right.
 \end{equation}
@@ -365,15 +365,15 @@ $\xi$~--- так называемый регрессор, равный
 
 Выражение для кинетической энергии в форме~\eqref{eq_K_in_form_with_D} может быть получено из уравнения~\eqref{eq_eq_for_K_for_linear_model} с учетом формул~\eqref{eq_transform_of_g_v_omega}, \eqref{eq_work_of_lin_jacobians} и \eqref{eq_work_of_ang_jacobians}:
 \begin{gather}
-    K = \sum_{i=1}^5 \biggl( \frac{1}{2} m_i \cdot \left( {}^0R_i^T J_{vi} \dot{q} \right)^T \!\!\cdot \left({}^0R_i^T J_{vi} \dot{q}\right) + \frac{1}{2} \left( {}^0R_i^T J_{\omega i} \dot{q} \right)^T \!\!\cdot \mathcal{I}^{i}_i \cdot \left( {}^0R_i^T J_{\omega i} \dot{q} \right) + \notag\\
+    K = \sum_{i=1}^5 \biggl( \frac{1}{2} m_i \cdot \left( -{}^0R_i^T J_{vi} \dot{q} \right)^T \!\!\cdot \left(-{}^0R_i^T J_{vi} \dot{q}\right) + \frac{1}{2} \left( -{}^0R_i^T J_{\omega i} \dot{q} \right)^T \!\!\cdot \mathcal{I}^{i}_i \cdot \left( -{}^0R_i^T J_{\omega i} \dot{q} \right) + \notag\\
     %
-    + (m_ir^i_{i,\,ci})^T \cdot \Bigl( \left( {}^0R_i^T J_{vi} \dot{q} \right) \times \left( {}^0R_i^T J_{\omega i} \dot{q} \right) \Bigr) \biggr) = \notag\\
+    + (m_ir^i_{i,\,ci})^T \cdot \Bigl( \left( -{}^0R_i^T J_{vi} \dot{q} \right) \times \left( -{}^0R_i^T J_{\omega i} \dot{q} \right) \Bigr) \biggr) = \notag\\
     %
     = \sum_{i=1}^5 \biggl(\frac{1}{2} m_i \dot{q}^T J_{vi}^T J_{vi} \dot{q} \!+\! \frac{1}{2} \dot{q}^T J_{\omega i}^T \, {}^0\!R_i \, \mathcal{I}^{i}_i \, {}^0\!R_i^T J_{\omega i} \dot{q} \!+\! (m_i \underbrace{{}^0\!R_i r^i_{i,\,ci}}_{\displaystyle r^0_{i,\,ci}})^T \!\!\cdot \Bigl( \left( J_{vi} \dot{q} \right) \times \left( J_{\omega i} \dot{q} \right) \Bigr) \!\biggr) = \notag \\
     %
-    = \frac{1}{2} \dot{q}^T \Biggl(\sum_{i=1}^5 \Bigl(m_i J_{vi}^T J_{vi} + J_{\omega i}^T \, {}^0\!R_i \, \mathcal{I}^{i}_i \, {}^0\!R_i^T J_{\omega i} + x\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{x} \,\, + \notag \\
+    = \frac{1}{2} \dot{q}^T \Biggl(\sum_{i=1}^5 \Bigl(m_i J_{vi}^T J_{vi} + J_{\omega i}^T \, {}^0\!R_i \, \mathcal{I}^{i}_i \, {}^0\!R_i^T J_{\omega i} + 2 \cdot x\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{x} \,\, + \notag \\
     %
-    + \,\, y\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{y} + z\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{z}\Bigr) \Biggr) \dot{q},
+    + \,\, 2 \cdot y\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{y} + 2 \cdot z\{ m_i r^0_{i,\,ci} \} \!\cdot\! J_{z}\Bigr) \Biggr) \dot{q},
 \end{gather}
 при преобразованиях которого учтено то, что
 \begin{equation*}
