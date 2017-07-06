@@ -7,8 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   brics_actuator
-
   message_generation
+)
+
+add_message_files(
+  FILES
+  DecartTrajectory.msg
 )
 
 add_service_files(
@@ -19,13 +23,16 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
 )
 
 #catkin_package(
 #    CATKIN_DEPENDS rospy std_msgs
 #)
 
-catkin_package()
+catkin_package(
+    CATKIN_DEPENDS message_runtime
+)
 
 include_directories(
     include
