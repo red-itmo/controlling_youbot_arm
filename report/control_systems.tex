@@ -79,4 +79,39 @@
 при $x \ne x_0$ и равна нулю при $x = x_0$.
 Следовательно, по 2-ой теореме Ляпунова состояние системы $x = x_0$, при котором, к слову сказать, $q = q_d$ и $\dot{q} = [0\;0\;\ldots\;0]^T$, является асимптотически устойчивым.
 
+\subsection{Система управления процессом следования по траектории}
+Для системы управления процессом следования роботом по траектории, описываемой вектор-функцией $q_d(t) = \left[ q_{d1}(t) \; q_{d2}(t) \; q_{d3}(t) \; q_{d4}(t) \; q_{d5}(t) \right]^T$\!\!\!,\; возьмем следующий закон управления:
+\begin{equation}\label{eq_trajectory_tracking_control_law}
+    \tau_e = M(q) \bigl( \ddot{q}_d + K_d (\dot{q}_d - \dot{q})+  K_p (q_d - q) \bigr) + C(q,\dot{q}) \dot{q} + G(q) + t_f(\dot{q}),
+\end{equation}
+где $K_d = const$ и $K_p = const$.
+
+С~учетом его и уравнения~\eqref{eq_model_with_standard_matrix} модель замкнутой системы опишется следующим выражением:
+\begin{equation}
+    M(q) \bigl( \ddot{q}_d - \ddot{q} + K_d (\dot{q}_d - \dot{q})+  K_p (q_d - q) \bigr) = 0,
+\end{equation}
+которое после деления на $M(q)$ и применения обозначения
+\begin{equation}
+    \varepsilon = q_d - q
+\end{equation}
+может быть переписано в виде:
+\begin{equation}\label{eq_trajectory_tracking_closed_loop}
+    \ddot{\varepsilon} + K_d \dot{\varepsilon} +  K_p \varepsilon = 0 \ldotp
+\end{equation}
+
+Согласно последнему уравнению, использование закона управления~\eqref{eq_trajectory_tracking_control_law} дает возможность полностью определять поведение робота значениями матриц $K_p$ и $K_d$.
+
+В~данной работе матрицы $K_p$ и $K_d$ были выбраны диагональными:
+\begin{equation}
+    K_p = \diag\{k_{pi}\},
+    \qquad
+    K_d = \diag\{k_{di}\},
+\end{equation}
+потому что это позволяет <<разбить>> уравнение~\eqref{eq_trajectory_tracking_closed_loop} на 5~независимых дифференциальных уравнений, а их компоненты~--- положительными:
+\begin{equation}
+    \qquad
+    k_{pi} > 0,\ k_{di} > 0,\ \forall i=\overline{1,5},
+\end{equation}
+так как при этом система получается устойчивой (все 5~уравнений получаются имеющими корни только с отрицательной вещественной частью).
+
 \newpage
