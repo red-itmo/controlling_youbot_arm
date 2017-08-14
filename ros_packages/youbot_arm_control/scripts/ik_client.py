@@ -40,7 +40,7 @@ if __name__ == "__main__":
     print("Requesting rpy: (%f; %f; %f)" % (rr, pp, yy))
 
     resp = ikc.ikClient((x, y, z), (rr, pp, yy))
-    if resp:
+    if resp.achievable:
         print("accepted solve!")
     else:
         print("failed solve!")
