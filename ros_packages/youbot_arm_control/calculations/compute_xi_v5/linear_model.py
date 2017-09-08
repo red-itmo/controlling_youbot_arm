@@ -399,7 +399,7 @@ def makeXImodules():
                 print('\t\t\tsubElement_' + str(k) + ' start at ' + str(dt.datetime.fromtimestamp(tm())))
 
                 file = open(fileName, 'a')
-                file_tex = open(fileName_tex, 'a')
+                # file_tex = open(fileName_tex, 'a')
 
                 # compute expression
                 opL_sym_raw = operatorL(L[i][k], j)
@@ -427,7 +427,9 @@ def makeXImodules():
                 " START CREATING method in MODULE "
 
                 # generate python code
-                opL_py_raw = sympy.printing.lambdarepr.lambdarepr(opL_sym)
+                opL_py_raw = sympy.printing
+                .
+                lambdarepr.lambdarepr(opL_sym)
 
                 # some replaces, e.g. a_1 to a[0], Derivative(q_1(t), t) to dq[0]
                 opL_py_well = python_gencode(opL_py_raw)
@@ -448,8 +450,8 @@ def makeXImodules():
                 " END CREATING method in MODULE "
 
                 # writing data to files
-                file_tex.write(str(opL_sym))
-                file_tex.close()
+                # file_tex.write(str(opL_sym))
+                # file_tex.close()
 
                 file.write(module)
                 file.close()
@@ -486,6 +488,18 @@ def makeXImodules():
     for i in range(5):
         f.write(str(regressor_zeros[i])+'\n')
     f.close()
+
+def makeMfile():
+    # create file or rewrite
+    mFile = open('M.txt', 'w')
+    mFile.write('\n')
+    mFile.close()
+    # open file for append something
+    mFile = open('M.txt', 'a')
+
+    mFile.close()
+
+
 
 if __name__ == '__main__':
     makeXImodules()

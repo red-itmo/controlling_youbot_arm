@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from numpy import cos, sin, sqrt, pi
+from numpy import cos, sin
 
 
 class XI:
@@ -33,70 +33,4 @@ class XI:
 		a, d = self.a, self.d
 		opL_2 = 0
 		return opL_2
-
-	def opL3(self):
-		"""003"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_3 = 0
-		return opL_3
-
-	def opL4(self):
-		"""004"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_4 = 0
-		return opL_4
-
-	def opL5(self):
-		"""005"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_5 = ddq[0]
-		return opL_5
-
-	def opL6(self):
-		"""006"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_6 = 0
-		return opL_6
-
-	def opL7(self):
-		"""007"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_7 = 0
-		return opL_7
-
-	def opL8(self):
-		"""008"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_8 = 0
-		return opL_8
-
-	def opL9(self):
-		"""009"""
-		q, dq, ddq = self.q, self.dq, self.ddq
-		a, d = self.a, self.d
-		opL_9 = 0
-		return opL_9
-
-	def getXI(self, q, dq, ddq):
-		self.q = q
-		self.dq = dq
-		self.ddq = ddq
-		XI = [0 for i in range(10)]
-		XI[0] = self.opL0()
-		XI[1] = self.opL1()
-		XI[2] = self.opL2()
-		XI[3] = self.opL3()
-		XI[4] = self.opL4()
-		XI[5] = self.opL5()
-		XI[6] = self.opL6()
-		XI[7] = self.opL7()
-		XI[8] = self.opL8()
-		XI[9] = self.opL9()
-		return XI
 

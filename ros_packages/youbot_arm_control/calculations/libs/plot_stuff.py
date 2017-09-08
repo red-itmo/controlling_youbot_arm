@@ -62,16 +62,6 @@ def plotChis(chis, nums, chisFilt=None, sd={}, avg={}, sdP=()):
         subPlot.plot(t, [avg['filt'][i] - sd['filt'][i]] * len(chis), 'r--', linewidth=0.5)
         s = "r{:.2f}%; f{:.2f}%".format(sdP[0][i], sdP[1][i])
         subPlot.set_title(s, fontsize='x-small', mode='')
-
-    # rowCount = 0
-    # for i in range(len(nums)):
-    #     if i in [k*8 for k in range(1, 7)]:
-    #         rowCount += 1
-    #     rows[rowCount][i - 8 * rowCount].plot(t, [row[i] for row in chis], linewidth=0.5, color='b')
-    #     if chisFilt is not None:
-    #         rows[rowCount][i - 8 * rowCount].plot(t, [row[i] for row in chisFilt], linewidth=0.5, color='r')
-    #     rows[rowCount][i - 8 * rowCount].legend(['raw' + str(nums[i]), 'fil'+str(nums[i])], mode="expand", fontsize='x-small', ncol=2)
-    #     rows[rowCount][i - 8 * rowCount].set_ylim(auto=True)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.95, hspace=0.10,
                         wspace=0.20)
     plt.show()

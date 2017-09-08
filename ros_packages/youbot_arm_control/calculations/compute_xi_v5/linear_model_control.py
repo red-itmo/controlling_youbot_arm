@@ -6,6 +6,7 @@ import datetime as dt
 import time
 
 import sympy
+import numpy
 from sympy import *
 import re
 # from symengine import cos, sin
@@ -47,6 +48,9 @@ for i in range(0, n):
 # END Q BLOCK
 
 # DH parameters 0..4
+anum = (0.033, 0.155, 0.135, 0., 0.)
+dnum = (0.147, 0, 0, 0, 0.218)
+
 a = symbols("a_1 a_2 a_3 a_4 a_5")
 d = symbols("d_1 d_2 d_3 d_4 d_5")
 ai = [a[0], a[1], a[2], 0, 0]
@@ -399,7 +403,7 @@ def makeXImodules():
                 print('\t\t\tsubElement_' + str(k) + ' start at ' + str(dt.datetime.fromtimestamp(tm())))
 
                 file = open(fileName, 'a')
-                file_tex = open(fileName_tex, 'a')
+                # file_tex = open(fileName_tex, 'a')
 
                 # compute expression
                 opL_sym_raw = operatorL(L[i][k], j)
@@ -448,8 +452,8 @@ def makeXImodules():
                 " END CREATING method in MODULE "
 
                 # writing data to files
-                file_tex.write(str(opL_sym))
-                file_tex.close()
+                # file_tex.write(str(opL_sym))
+                # file_tex.close()
 
                 file.write(module)
                 file.close()
@@ -487,51 +491,172 @@ def makeXImodules():
         f.write(str(regressor_zeros[i])+'\n')
     f.close()
 
+def getTensor(i):
+    """ getTensor(0) = I_1"""
+    return Matrix([[Ixx[i], Ixy[i], Ixz[i]],
+                    [Ixy[i], Iyy[i], Iyz[i]],
+                    [Ixz[i], Iyz[i], Izz[i]]])
+
+def get_riici(i):
+    """ get_riici(0) = rc_1 """
+    return R(0, i) * Matrix([xc[i], yc[i], zc[i]])
+
+def getU():
+    """ potential energy """
+    U = 0
+    for i in range(n):
+        U -= (m[i] * get_g(i).T * get_ri_0To(i) + get_g(i).T * (m[i] * Matrix([xc[i], yc[i], zc[i]]))) # 1) U-=; 2) change get_riici; 3) delete [0]
+    return U
+
+def getD():
+    # inertia matrix
+    D = Matrix([[0 for i in range(n)] for j in range(n)])
+    for i in range(n):
+        Jx = - (getJv(i)[2,:]).T * getJomega(i)[1,:] + (getJv(i)[1,:]).T * getJomega(i)[2,:]
+        Jy =   (getJv(i)[2,:]).T * getJomega(i)[0,:] - (getJv(i)[0,:]).T * getJomega(i)[2,:]
+        Jz = - (getJv(i)[1,:]).T * getJomega(i)[0,:] + (getJv(i)[0,:]).T * getJomega(i)[1,:]
+        D += m[i] * getJv(i).T * getJv(i) + getJomega(i).T * R(0, i) * getTensor(i) * R(0, i).T * getJomega(i) + 2 * (m[i] * get_riici(i))[0] * Jx + 2 * (m[i] * get_riici(i))[1] * Jy + 2 * (m[i] * get_riici(i))[2] * Jz
+    return D
+
+
+def getC(D):
+    # Coriolis and Centrifugal matrix
+    C = [[[0 for k in range(n)] for j in range(n)] for i in range(n)]
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                C[i][j][k] = (1/2) * (diff(D[k,j], q[i]) + diff(D[k,i], q[j]) - diff(D[i,j], q[k]))
+
+    C_new = [[0 for k in range(n)] for j in range(n)]
+    for k in range(n):
+        for j in range(n):
+            s = 0
+            for i in range(n):
+                s += C[i][j][k] * dq[i] # q[i] --> dq[i]
+            C_new[k][j] = s
+    return C_new
+
+def getG(U):
+    """ gravity matrix"""
+    G = [0 for j in range(n)]
+    for j in range(n):
+        G[j] = diff(U, q[j])
+    return G
+
+
+def cppButyfiler(expr):
+
+    def replaceDotsQ(m):
+        "replace Derivativ and replace q_i(t) on dq_i and next dq[i]"
+        lala = re.search(r"[d]*q_[1-5]", m.group(0))
+        t = re.findall(r"[t]+", m.group(0))
+        num = re.search(r"[1-5]", lala.group(0))
+        n = int(num.group(0))-1
+        if len(t) - 2 == 1:
+            return "dq[" + str(n) + "]"
+        elif len(t) - 2 == 2:
+            return "ddq[" + str(n) + "]"
+
+    def replaceADi(m):
+        paramName = re.search(r"[ad]", m.group(0))
+        num = re.search(r"[1-5]", m.group(0))
+        n = int(num.group(0))-1
+        return str(paramName.group(0)) + "[" + str(n) + "]"
+
+    def deleteT(m):
+        return ""
+
+    def replaceQi(m):
+        q_i = re.search(r"q_[1-5]", m.group(0))
+        num = re.search(r"[1-5]", m.group(0))
+        n = int(num.group(0))-1
+        return "q[" + str(n) + "]"
+
+
+    # replace all Derivative(.*)
+    replace_dotsq = re.sub(r"Derivative\([d]*q_[1-5]+\(t\),[\w ,]+\)", replaceDotsQ, expr)
+    # delete all "(t)"
+    replace_t = re.sub(r"\(t\)", deleteT, replace_dotsq)
+    # replace all q_i to q[i]
+    replace_qi = re.sub(r"q_[1-5]", replaceQi, replace_t)
+    # replace DH parameters
+    replace_adi = re.sub(r"[ad]_[1-5]", replaceADi, replace_qi)
+    # addstdsin = re.sub(r"sin", 'std::sin', replace_adi)
+    # addstdcos = re.sub(r"cos", 'std::cos', addstdsin)
+    # addstdpow = re.sub(r"pow", 'std::pow', addstdcos)
+    return replace_adi
+
+
+def make1dMatrix(Mat, fileNames, name, i=None):
+    for j in range(n):
+        # open files for append something
+        files = [None] * len(fileNames)
+        for k in range(len(fileNames)):
+            files[k] = open(fileNames[k], 'a')
+        if i is not None:
+            varible = "{0}[{1}][{2}]".format(name,i, j)
+        else:
+            varible = "{0}[{1}]".format(name, j)
+
+        print("For {0}".format(varible))
+        rawExpr = M[j]
+
+        lenRaw = len(str(rawExpr))
+        print(lenRaw)
+
+        simpExpr = combsimp(powsimp(trigsimp(expand(rawExpr))))
+        lenSimp = len(str(simpExpr))
+        print(lenSimp)
+
+        # if simplify was shit ;)
+        if lenRaw < lenSimp:
+            simpExpr = rawExpr
+
+        # subs for pi and DH parameters to expressions
+        rawSubsExpr = rawExpr.subs(pi, numpy.pi)
+        simpSubsExpr = simpExpr.subs(pi, numpy.pi)
+        for l in range(5):
+            rawSubsExpr = rawSubsExpr.subs([(ai[l], anum[l]), (di[l], dnum[l])])
+            simpSubsExpr = simpSubsExpr.subs([(ai[l], anum[l]), (di[l], dnum[l])])
+
+        mRaw = cppButyfiler(sympy.ccode(rawExpr, assign_to=varible, precision=15))
+        mSimp = cppButyfiler(sympy.ccode(simpExpr, assign_to=varible, precision=15))
+        mRawSubs = cppButyfiler(sympy.ccode(rawSubsExpr, assign_to=varible, precision=15))
+        mSimpSubs = cppButyfiler(sympy.ccode(simpSubsExpr, assign_to=varible, precision=15))
+
+        files[0].write(mRaw)
+        files[1].write(mSimp)
+        files[2].write(mRawSubs)
+        files[3].write(mSimpSubs)
+
+        for k in range(len(fileNames)):
+            files[k].close()
+    print('row ok!')
+
+def makeCtrl(Mat, name='M'):
+    """ Cpp code genarator"""
+    names = [name+'raw', name+'simp', name+'rawSubs', name+'simpSubs']
+    path = 'control_matricies/{:s}/'.format(name)
+    fileNames = ['' for i in range(len(names))]
+    # create files or rewrite
+    for i in range(len(names)):
+        fileNames[i]  = path + names[i] + '.txt'
+        mFile = open(fileNames[i], 'w')
+        mFile.close()
+
+    try:
+        for i in range(n):
+            print('i='+str(i))
+            make1dMatrix(Mat[i,:], fileNames, name, str(i))
+    except TypeError:
+        make1dMatrix(Mat, fileNames, name)
+
+
 if __name__ == '__main__':
-    makeXImodules()
-
-
-    "OLD VERSION OF MAKE FILE-EXPRESSIONS"
-    # tm = time.time
-    # startTmatrix = tm()
-    # print('computing start! ' + str(dt.datetime.fromtimestamp(tm())))
-    # for j in range(row, row+1): # 0..n
-    #     startTrow = tm()
-    #     print('\trow_' + str(j) + ' start!')
-    #     # opL = ''
-    #     for i in range(j, col+1): # j..n
-    #         print('\t\telement_' + str(i) + ' start!')
-    #         fileName = 'xi/xi_' + str(j) + str(i)
-    #         fileName_tex = 'xi_tex/xi_' + str(j) + str(i)
-    #         for k in range(0, nL):
-    #             startTelement = tm()
-    #             print('\t\t\tsubElement_' + str(k) + ' start at ' + str(dt.datetime.fromtimestamp(tm())))
-    #             file = open(fileName, 'a')
-    #             file_tex = open(fileName_tex, 'a')
-    #
-    #             opL_sym_raw = operatorL(L[i][k], j)
-    #             len_raw = len(str(opL_sym_raw))
-    #             print(len_raw)
-    #             # opL_sym = simplify(opL_sym)
-    #             opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
-    #             # opL_sym = combsimp((opL_sym_raw))
-    #
-    #             len_ok = len(str(opL_sym))
-    #             print(len_ok)
-    #             time.sleep(1)
-    #             if len_raw < len_ok:
-    #                 opL_sym = opL_sym_raw
-    #             file_tex.write(str(opL_sym))
-    #             file_tex.close()
-    #
-    #             varName = 'opL_' + str(i) + str(k)
-    #             opL_raw = o.octave_code(opL_sym, assign_to=varName, human=True, inline=True)
-    #             opL_oct = octaveButyfiler(opL_raw)
-    #             opL = str(opL_oct) + '\n\n'
-    #             file.write(opL)
-    #             file.close()
-    #             print('\t\t\tsubElement_' + str(k) + ': ' + str(tm() - startTelement) + ' end at ' + str(dt.datetime.fromtimestamp(tm())))
-    #         print('\t\telement_' + str(i) + ': ' + str(tm() - startTrow))
-    #     print('\trow_' + str(j) + ': ' + str(tm() - startTrow))
-    # print('total time on compute matrix \XI: ' + str(tm() - startTmatrix))
-    # print(str(dt.datetime.fromtimestamp(tm())))
+    # makeXImodules()
+    M = getD()
+    makeCtrl(M, 'M')
+    C = getC(M)
+    makeCtrl(C, 'C')
+    G = getG(getU())
+    makeCtrl(G, 'G')
