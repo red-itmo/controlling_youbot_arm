@@ -2,7 +2,7 @@ clc();
 clear;
 N = 50;
 for i = 1:N
-    name = "/media/data/evo/robotics_report/ros_packages/youbot_arm_control/calculations/data_for_identification/ee/EE" + string(i-1) + ".txt";
+    name = "/media/data/evo/robotics_report/symbolic_computation/data_for_identification/ee/EE" + string(i-1) + ".txt";
     r = read(name, -1, 5);
     EE1(:,:,i) = r'
 end
@@ -14,7 +14,8 @@ global A B pos columns flag
 function init = converter(cols)
     //cols in scilab index numeration, i.e. starting with 1
     //init in python index numeration, i.e. starting with 0
-    no =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 20, 28, 31, 32, 42, 44, 45, 46, 15, 14]+1;
+//    no =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 20, 28, 31, 32, 42, 44, 45, 46, 15, 14]+1;
+    no = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 20, 28, 31, 32, 44, 45, 46, 47] + 1;
     ind = 0;
     for i = 1:70
         in = %t;

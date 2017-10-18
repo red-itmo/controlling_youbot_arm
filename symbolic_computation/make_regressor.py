@@ -17,12 +17,11 @@ from libs.regexps import *
 
 from numpy import pi
 
-real_thi = [str(pi * (169. / 180.)) + ' - q[0]',
-            str(pi * (65. / 180.) + (pi / 2.)) + ' - q[1]',
-            str(-pi * (146. / 180.)) + ' - q[2]',
-            str(pi * (102.5 / 180) + (pi / 2.)) + ' - q[3]',
-            str(pi * (167.5 / 180.)) + ' - q[4]']
-
+real_thi = [pi * (169. / 180.),
+            pi * (65. / 180.) + (pi / 2.),
+            -pi * (146. / 180.),
+            pi * (102.5 / 180) + (pi / 2.),
+            pi * (167.5 / 180.)]
 
 def makeXImodules():
     """
@@ -48,7 +47,7 @@ def makeXImodules():
 
             # First piece of template of module
             module = '#!/usr/bin/env python3\n'
-            module += 'from numpy import cos, sin, pi\n'
+            module += 'from numpy import cos, sin, pi, sqrt\n'
             module += '\n\n'
             module += 'class XI:\n'
             module += '\t"""XI_' + str(i) + str(j) + '"""\n\n'
@@ -69,6 +68,7 @@ def makeXImodules():
 
                 # compute expression
                 opL_sym_raw = operatorL(L[i][k], j)
+
                 # it is work and okay!!1!
                 print(type(opL_sym_raw))
                 if type(opL_sym_raw) in [ImmutableMatrix]:
@@ -77,8 +77,9 @@ def makeXImodules():
                 print(len_raw)
 
                 # simplify expression
-                opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
+                #opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
                 # opL_sym = simplify(opL_sym)   # alternative method
+                opL_sym = opL_sym             # raw
 
                 # make record about zeros elements (for removing zeros columns)
                 if opL_sym == sympy.numbers.Zero():
@@ -94,12 +95,15 @@ def makeXImodules():
 
                 " START CREATING method in MODULE "
 
+                for l in range(5):
+                    opL_sym = opL_sym.subs(theta[l], real_thi[l])
+
                 # generate python code
                 opL_py_raw = sympy.printing.lambdarepr.lambdarepr(opL_sym)
 
                 # some replaces, e.g. a_1 to a[0], Derivative(q_1(t), t) to dq[0]
-                # !!! подстановка НАСТОЯЩИХ УГЛОВ С РОБОТА
-                opL_py_well = python_gencode(opL_py_raw, real_thi)    # see in lins/regexps.py
+                opL_py_well = python_gencode(opL_py_raw)  # see in lins/regexps.py
+                #opL_py_well = python_gencode(opL_py_raw, real_thi)    # see in lins/regexps.py
 
                 opL_sym = opL_py_well
                 opNum = str(k)
@@ -148,6 +152,9 @@ def makeXImodules():
 
     # Файл с нулевыми элементами, в котором можно узреть нулевые столбцы
     f = open('xi/regressor_zeros.txt', 'w')
+    for i in range(1, n):
+        for j in range(1, i * nL ):
+            regressor_zeros[i][j] = 0
     for i in range(n):
         f.write(str(regressor_zeros[i])+'\n')
     f.close()

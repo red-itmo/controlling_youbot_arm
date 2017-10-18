@@ -58,17 +58,17 @@ def python_gencode(expr, thetas=None):
     def deleteT(m):
         return ""
 
+    # def replaceQi(m):
+    #     q_i = re.search(r"q_[1-5]", m.group(0))
+    #     num = re.search(r"[1-5]", m.group(0))
+    #     n = int(num.group(0))-1
+    #     return str(thetas[n])
+
     def replaceQi(m):
         q_i = re.search(r"q_[1-5]", m.group(0))
         num = re.search(r"[1-5]", m.group(0))
-        n = int(num.group(0))-1
-        return str(thetas[n])
-
-    # def replaceQi2(m):
-    #     q_i = re.search(r"q_[1-5]", m.group(0))
-    #     num = re.search(r"[1-5]", m.group(0))
-    #     n = int(num.group(0)) - 1
-    #     return "q[" + str(n) + "]"
+        n = int(num.group(0)) - 1
+        return "q[" + str(n) + "]"
 
     # replace all Derivative(.*)
     replace_dotsq = re.sub(r"Derivative\([d]*q_[1-5]+\(t\),[\w ,]+\)", replaceDotsQ, expr)

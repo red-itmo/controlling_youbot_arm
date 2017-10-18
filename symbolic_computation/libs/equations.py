@@ -222,3 +222,6 @@ def operatorL(L, j, simp=False):
 
 init_jacobians()
 compute_lagrange_function()
+
+if __name__ == '__main__':
+    print(L[1][3])
