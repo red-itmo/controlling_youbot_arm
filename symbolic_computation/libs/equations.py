@@ -15,12 +15,12 @@
 
 import time
 from sympy import *
-from initialization import *
+from libs.initialization import *
 
 
 def mySimple(expr):
     """ Тут задается какими алгоритмами упрощать """
-    expr = simplify(expand(expr))
+    expr = simplify(expr)
     return expr
 
 
@@ -72,6 +72,8 @@ def get_z(i, simp=True):
         return Zs[i]
     else:
         z = R(0, i) * Matrix([[0], [0], [1]])
+        if simp:
+            z = mySimple(z)
         Zs[i] = z
         return z
 
@@ -88,7 +90,7 @@ def get_ri_0To(i, simp=False):
     """
         get_ri_0To(1) = r^1_{0, 1}
     """
-    r = transpose(R(0, i)) * get_r0_0To(i)
+    r = transpose(R(0, i, simp)) * get_r0_0To(i)
     if simp:
         r = mySimple(r)
     return r  # 3x1
@@ -98,24 +100,10 @@ def get_g(i, simp=False):
     """
         get_g(1) = g_1
     """
-    g = transpose(R(0, i)) * g0
+    g = transpose(R(0, i, simp)) * g0
     if simp:
         g = mySimple(g)
     return g  # 3x1
-
-
-def init_jacobians():
-    """ MUST run first """
-    # for v
-    for i in range(0, n):
-        for j in range(0, i + 1):
-            el = get_z(j).cross(get_r0_0To(i + 1) - get_r0_0To(j))
-            Jv[i][j] = el
-    # for omega
-    for i in range(0, n):
-        for j in range(0, i + 1):
-            el = get_z(j)
-            Jomega[i][j] = el
 
 
 def getJv(i):
@@ -148,7 +136,7 @@ def get_vi(i, simp=False):
     """
         get_vi(1) = v^1_1
     """
-    v = transpose(R(0, i)) * get_v0(i)
+    v = transpose(R(0, i, simp)) * get_v0(i, simp)
     if simp:
         v = mySimple(v)
     return v  # 3x1
@@ -166,10 +154,24 @@ def get_omegai(i, simp=False):
     """
         get_omegai(1) = omega^1_1
     """
-    omega = transpose(R(0, i)) * get_omega0(i)
+    omega = transpose(R(0, i, simp)) * get_omega0(i)
     if simp:
         omega = mySimple(omega)
     return omega  # 3x1
+
+
+def init_jacobians(simp=False):
+    """ MUST run first """
+    # for v
+    for i in range(0, n):
+        for j in range(0, i + 1):
+            el = get_z(j, simp).cross(get_r0_0To(i + 1) - get_r0_0To(j))
+            Jv[i][j] = el
+    # for omega
+    for i in range(0, n):
+        for j in range(0, i + 1):
+            el = get_z(j, simp)
+            Jomega[i][j] = el
 
 
 def compute_lagrange_function(simp=False):
@@ -180,10 +182,10 @@ def compute_lagrange_function(simp=False):
     for i in range(0, n):
         """cols(L) = 0..9, rows(L) = 0..4"""
         startTrow = tm()
-        l24 = get_vi(i + 1).cross(get_omegai(i + 1)) + get_g(i + 1)
-        omegai = get_omegai(i + 1)
-        L[i][0] = Rational(1, 2) * transpose(get_vi(i + 1)) * get_vi(i + 1) + transpose(get_g(i + 1)) * get_ri_0To(
-            i + 1)
+        l24 = get_vi(i + 1, simp).cross(get_omegai(i + 1, simp)) + get_g(i + 1, simp)
+        omegai = get_omegai(i + 1, simp)
+        L[i][0] = Rational(1, 2) * transpose(get_vi(i + 1, simp)) * get_vi(i + 1, simp) + transpose(get_g(i + 1, simp)) * get_ri_0To(
+            i + 1, simp)
         # L[i][0] = Rational(1,2) * transpose(get_v0(i)) * get_v0(i) + transpose(g0) * get_r0_0To(i)
         L[i][1] = l24[0]
         L[i][2] = l24[1]

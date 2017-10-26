@@ -35,6 +35,7 @@ theta = symbols('theta_1 theta_2 theta_3 theta_4 theta_5')
 
 # Объявление q_i(t), dq_i(t), ddq_i(t) как функций от времени, где i = [0..n)
 q, dq, ddq = [list() for i in range(3)]
+
 for i in range(0, n):
     q.append(Function('q_' + str(i + 1))(t))
     dq.append(diff(q[i], t))

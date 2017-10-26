@@ -38,7 +38,7 @@ def makeXImodules():
     print('\nRegressor computing start ' + time.ctime())
     for j in range(0, n):
         print('\tRow ' + str(j) + ' start at ' + time.ctime())
-        for i in range(j, n):
+        for i in range(0, n):
             print('\t\tElement ' + str(i) + ' start at ' + time.ctime())
 
             fileName = 'xi/xi_' + str(j) + str(i) + '.py'
@@ -77,9 +77,9 @@ def makeXImodules():
                 print(len_raw)
 
                 # simplify expression
-                #opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
-                # opL_sym = simplify(opL_sym)   # alternative method
-                opL_sym = opL_sym             # raw
+                # opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
+                opL_sym = simplify(opL_sym_raw)   # alternative method
+                # opL_sym = opL_sym_raw             # raw expressions
 
                 # make record about zeros elements (for removing zeros columns)
                 if opL_sym == sympy.numbers.Zero():
@@ -95,6 +95,9 @@ def makeXImodules():
 
                 " START CREATING method in MODULE "
 
+                # подстановка настоящиx констант в выражения
+                # например sin(theta_0 - q_0), если theta_0 = 42, то
+                # получится sin(42 - q_0)
                 for l in range(5):
                     opL_sym = opL_sym.subs(theta[l], real_thi[l])
 
