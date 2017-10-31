@@ -30,28 +30,30 @@ Izz = symbols('I1zz I2zz I3zz I4zz I5zz')
 Ixy = symbols('I1xy I2xy I3xy I4xy I5xy')
 Ixz = symbols('I1xz I2xz I3xz I4xz I5xz')
 Iyz = symbols('I1yz I2yz I3yz I4yz I5yz')
-theta = symbols('theta_1 theta_2 theta_3 theta_4 theta_5')
-
+theta = [Symbol('theta_' + str(i)) for i in range(5)]
 
 # Объявление q_i(t), dq_i(t), ddq_i(t) как функций от времени, где i = [0..n)
 q, dq, ddq = [list() for i in range(3)]
-
 for i in range(0, n):
     q.append(Function('q_' + str(i + 1))(t))
     dq.append(diff(q[i], t))
     ddq.append(diff(q[i], t, 2))
 
 
+class Theta(Function):
+    def fdiff(self, argindex=1):
+        if len(self.args) > 0:
+            return -1
+        else:
+            return 0
+
 # DH-parameters
 ai = [a[0], a[1], a[2], 0, 0]
 di = [d[0], 0, 0, 0, d[4]]
 alphai = [pi / 2, 0, 0, pi / 2, 0]
 thi = [q[0], q[1], q[2], q[3], q[4]]
-thi = [theta[0] - q[0],
-       theta[1] - q[1],
-       theta[2] - q[2],
-       theta[3] - q[3],
-       theta[4] - q[4]]
+thi = [Theta(q[i]) for i in range(5)]
+
 # Ниже настоящие параметры робота, в силу непреодолимости некоторых обстоятельств,
 #  они подменяют предыдущие после этапа упрощения уравений динамики манипулятора
 # thi = [pi * (169. / 180.) - q[0],

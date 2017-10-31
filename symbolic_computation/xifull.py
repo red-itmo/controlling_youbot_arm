@@ -26,22 +26,31 @@ from xi.xi_34 import XI as XI34
 
 from xi.xi_44 import XI as XI44
 
+from numpy import pi
+
 N_L = 10
+
+
+thi = [pi * (169. / 180.),
+        pi * (65. / 180.) + (pi / 2.),
+        -pi * (146. / 180.),
+        pi * (102.5 / 180) + (pi / 2.),
+        pi * (167.5 / 180.)]
 
 
 class XIFull:
     """ regressor """
 
-    def __init__(self, a, d):
-        xi0 = [XI00(a=a, d=d),  XI01(a=a, d=d), XI02(a=a, d=d), XI03(a=a, d=d), XI04(a=a, d=d)]
-        xi1 = [             0,  XI11(a=a, d=d), XI12(a=a, d=d), XI13(a=a, d=d), XI14(a=a, d=d)]
-        xi2 = [             0,               0, XI22(a=a, d=d), XI23(a=a, d=d), XI24(a=a, d=d)]
-        xi3 = [             0,               0,              0, XI33(a=a, d=d), XI34(a=a, d=d)]
-        xi4 = [             0,               0,              0,              0, XI44(a=a, d=d)]
+    def __init__(self, a, d, theta):
+        xi0 = [XI00(a=a, d=d, theta=theta),  XI01(a=a, d=d, theta=theta), XI02(a=a, d=d, theta=theta), XI03(a=a, d=d, theta=theta), XI04(a=a, d=d, theta=theta)]
+        xi1 = [                          0,  XI11(a=a, d=d, theta=theta), XI12(a=a, d=d, theta=theta), XI13(a=a, d=d, theta=theta), XI14(a=a, d=d, theta=theta)]
+        xi2 = [                          0,                            0, XI22(a=a, d=d, theta=theta), XI23(a=a, d=d, theta=theta), XI24(a=a, d=d, theta=theta)]
+        xi3 = [                          0,                            0,                           0, XI33(a=a, d=d, theta=theta), XI34(a=a, d=d, theta=theta)]
+        xi4 = [                          0,                            0,                           0,                           0, XI44(a=a, d=d, theta=theta)]
         self.xi = [xi0, xi1, xi2, xi3, xi4]
         # self.linerCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 20, 28, 31, 32, 42, 44, 45, 46, 15, 14]
 
-        self.linerCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 20, 28, 31, 32, 44, 45, 46, 47]
+        self.linerCols = [0,1,2,3,4,5,6,7,8,9,10,14,17,18,20,28,31,32,42,44,46,47,59]
 
     def getWellColNums(self):
         all = set(range(70))
@@ -55,7 +64,7 @@ class XIFull:
         for i in range(n):
             for j in range(n):
                 if self.xi[i][j] != 0:
-                    xi_ij = self.xi[i][j].getXI(q, dq, ddq)
+                    xi_ij = self.xi[i][j].getXI(q, dq, ddq, thi)
                     xi = np.concatenate((xi, xi_ij))
                 else:
                     xi = np.concatenate((xi, np.zeros(N_L)))

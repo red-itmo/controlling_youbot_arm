@@ -5,6 +5,7 @@ import numpy as np
 from identification import Identification
 from libs.plot_stuff import plotTaus2, plotTaus, plotChis
 from libs.utils import getFileNamesContains
+from libs.initialization import *
 
 A = (0.033, 0.155, 0.135, 0., 0.)
 D = (0.147, 0, 0, 0, 0.218)
@@ -17,7 +18,7 @@ BIG_XIs_FILE_NAME = PATH + '/bigs/{:s}big_xi{:d}.txt'
 EE_FILE_NAME = PATH + '/ee/EE{:d}.txt'
 
 def generateBigXisRaw(ident):
-    for i in range(1, 11):
+    for i in range(1, 2):
         datafileName = DATA_FILE_NAME.format(i, '')
         bigXiFileName = BIG_XIs_FILE_NAME.format('raw/', i)
         bigTauFileName = BIG_TAUs_FILE_NAME.format('raw/', i)
@@ -33,7 +34,7 @@ def generateBigXisRaw(ident):
         ident.writeBigTau(bigTauFileName, bigTau)
 
 def generateBigXisFilt(ident):
-    for i in range(1, 11):
+    for i in range(1, 2):
         datafileName = DATA_FILE_NAME.format(i, '_filt')
         bigXiFileName = BIG_XIs_FILE_NAME.format('filt/', i)
         bigTauFileName = BIG_TAUs_FILE_NAME.format('filt/', i)
@@ -79,7 +80,7 @@ def getSD(chis):
     return sd, sdPer, avg
 
 if __name__ == '__main__':
-    ident = Identification(A, D)
+    ident = Identification(A, D, thi)
 
     # 1. Выбросить лин. завис. столбцы
     # ident.writeEE(EE_FILE_NAME, 50)

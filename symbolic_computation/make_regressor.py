@@ -17,11 +17,6 @@ from libs.regexps import *
 
 from numpy import pi
 
-real_thi = [pi * (169. / 180.),
-            pi * (65. / 180.) + (pi / 2.),
-            -pi * (146. / 180.),
-            pi * (102.5 / 180) + (pi / 2.),
-            pi * (167.5 / 180.)]
 
 def makeXImodules():
     """
@@ -36,9 +31,9 @@ def makeXImodules():
     """
     regressor_zeros = [[1 for j in range(n * nL)] for i in range(5)]
     print('\nRegressor computing start ' + time.ctime())
-    for j in range(0, n):
+    for j in range(4, n):
         print('\tRow ' + str(j) + ' start at ' + time.ctime())
-        for i in range(0, n):
+        for i in range(j, n):
             print('\t\tElement ' + str(i) + ' start at ' + time.ctime())
 
             fileName = 'xi/xi_' + str(j) + str(i) + '.py'
@@ -52,9 +47,10 @@ def makeXImodules():
             module += 'class XI:\n'
             module += '\t"""XI_' + str(i) + str(j) + '"""\n\n'
             module += '\tdef __init__(self, q=(0,0,0,0,0), dq=(0,0,0,0,0), ' \
-                      'ddq=(0,0,0,0,0), a=(0,0,0,0,0), d=(0,0,0,0,0)):\n' \
+                      'ddq=(0,0,0,0,0), a=(0,0,0,0,0), d=(0,0,0,0,0), theta=(0,0,0,0,0)):\n' \
                       '\t\tself.q, self.dq, self.ddq = q, dq, ddq\n' \
-                      '\t\tself.a, self.d = a, d\n\n'
+                      '\t\tself.a, self.d = a, d\n' \
+                      '\t\tself.theta = theta\n\n'
             module += '\tdef setData(self, q, dq, ddq, a, d):\n' \
                       '\t\tself.q, self.dq, self.ddq = q, dq, ddq\n' \
                       '\t\tself.a, self.d = a, d\n\n'
@@ -77,8 +73,8 @@ def makeXImodules():
                 print(len_raw)
 
                 # simplify expression
-                # opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
-                opL_sym = simplify(opL_sym_raw)   # alternative method
+                opL_sym = combsimp(powsimp(trigsimp(expand(opL_sym_raw))))
+                # opL_sym = simplify(opL_sym_raw)   # alternative method
                 # opL_sym = opL_sym_raw             # raw expressions
 
                 # make record about zeros elements (for removing zeros columns)
@@ -95,11 +91,9 @@ def makeXImodules():
 
                 " START CREATING method in MODULE "
 
-                # подстановка настоящиx констант в выражения
-                # например sin(theta_0 - q_0), если theta_0 = 42, то
-                # получится sin(42 - q_0)
+                # подмена функций Theta(q_i) на theta_i
                 for l in range(5):
-                    opL_sym = opL_sym.subs(theta[l], real_thi[l])
+                    opL_sym = opL_sym.subs(thi[l], theta[l])
 
                 # generate python code
                 opL_py_raw = sympy.printing.lambdarepr.lambdarepr(opL_sym)
@@ -118,6 +112,7 @@ def makeXImodules():
                             '\t\t"""' + str(i) + str(j) + str(k) + '"""\n' \
                             '\t\tq, dq, ddq = self.q, self.dq, self.ddq\n' \
                             '\t\ta, d = self.a, self.d\n' \
+                            '\t\ttheta = self.theta\n' \
                             '\t\topL_' + opNum + ' = ' + opL_sym + '\n' \
                             '\t\treturn opL_' + opNum + '\n\n'
 

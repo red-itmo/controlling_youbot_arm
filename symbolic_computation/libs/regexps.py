@@ -7,7 +7,6 @@
 
 import re
 
-
 def octaveButyfiler(expr):
     """ clear code for scilab """
     ptq = r"[d]*q_[1-5]"
@@ -72,11 +71,17 @@ def python_gencode(expr, thetas=None):
 
     # replace all Derivative(.*)
     replace_dotsq = re.sub(r"Derivative\([d]*q_[1-5]+\(t\),[\w ,]+\)", replaceDotsQ, expr)
+
     # delete all "(t)"
     replace_t = re.sub(r"\(t\)", deleteT, replace_dotsq)
+
     # replace all q_i to (q[i] + XXX*pi)
     replace_qi = re.sub(r"q_[1-5]", replaceQi, replace_t)
+
     # replace DH parameters
     replace_adi = re.sub(r"[ad]_[1-5]", replaceADi, replace_qi)
     return replace_adi
 
+if __name__ == '__main__':
+    st = 'd_1 * sin(theta_1)'
+    print(python_gencode(st))

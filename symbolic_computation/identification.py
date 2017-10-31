@@ -8,6 +8,8 @@ import time
 from libs.plot_stuff import plot
 from libs.utils import rmZeros, printWastedTime
 from xifull import XIFull
+from libs.initialization import *
+
 
 
 class Identification:
@@ -16,8 +18,8 @@ class Identification:
         n -- 5
     """
 
-    def __init__(self, a, d):
-        self.xi = XIFull(a, d)
+    def __init__(self, a, d, theta):
+        self.xi = XIFull(a, d, theta)
         self.wellColNums = self.xi.getWellColNums()
         # DH parameters
         self.a = a
@@ -224,6 +226,7 @@ class Identification:
             q = np.random.rand(5) * 4 - 2
             dq = np.random.rand(5) * 4 - 2
             ddq = np.random.rand(5) * 4 - 2
+
             xi = self.xi.getXiNumExCompressed(q, dq, ddq)
             xiT = xi.T
 
@@ -279,7 +282,7 @@ if __name__ == '__main__':
 
     A = (0.033, 0.155, 0.135, 0., 0.)
     D = (0.147, 0, 0, 0, 0.218)
-    ident = Identification(A, D)
+    ident = Identification(A, D, thi)
     #
     # q = (0,0,0,0,0)
     # dq = (0, 0, 0, 0, 0)
@@ -346,4 +349,4 @@ if __name__ == '__main__':
     # fileName = 'data_for_identification/processed_data/big_tau_1.txt'
     # ident.writeBigXi(fileName, bigTau)
 
-    ident.writeEE(20)
+    ident.writeEE(EEfileName, 20)
