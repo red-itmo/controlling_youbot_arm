@@ -32,7 +32,10 @@ def draw1dEx(a, d, q, iq=(2, 3, 4), point=(0, 0, 0), point_gripper=(0, 0, 0)):
     return x, y
 
 
+num = 1
+
 def plotIK(ks, q, h):
+    # number of solve (has been selected by radio buttons)
     # initialization of the plot
     fig, ax = plt.subplots()
     plt.subplots_adjust(left=0.50, bottom=0.50)
@@ -45,7 +48,7 @@ def plotIK(ks, q, h):
 
     # init solve for start
     x, y, z = h[:3, 3]
-    xx, yy = draw1dEx(ks.get_dh_a(), ks.get_dh_d(), q[0], iq=(2, 3, 5),
+    xx, yy = draw1dEx(ks.get_dh_a(), ks.get_dh_d(), q[num], iq=(2, 3, 5),
                       point=(x, y, z), point_gripper=(x, y, z))
 
     # plot diff usefullests
@@ -84,12 +87,13 @@ def plotIK(ks, q, h):
         q5 = sq5.val
         # solve FK for setting angles
         x, q, r, h = ks.forward([0, 0, q2, q3, q4, 0, 0])
+        print x, r
         # solve IK for solved FK for setting angles
-        q = ks.inverse(x, r, h)
+        qs = ks.inverse(x, r, h)
         # draw configuration of the manipulator
         # the magenta point is given!
         x, y, z = h[:3, 3]
-        xx, yy = draw1dEx(ks.get_dh_a(), ks.get_dh_d(), q[0], iq=(2, 3, 5),
+        xx, yy = draw1dEx(ks.get_dh_a(), ks.get_dh_d(), qs[num], iq=(2, 3, 5),
                           point=(x, y, z), point_gripper=(x, y, z))
         # update data
         l0.set_xdata(xx)
@@ -118,5 +122,20 @@ def plotIK(ks, q, h):
         sq5.reset()
 
     button.on_clicked(reset)
+
+    # rax = plt.axes([0.025, 0.5, 0.15, 0.15])
+    # radio = RadioButtons(rax, (0, 1), active=0)
+    #
+    # def changeSolve(value):
+    #     num = int(value)
+    #     q = qs[num]
+    #     sq1.set_val(q[0])
+    #     sq2.set_val(q[1])
+    #     sq3.set_val(q[2])
+    #     sq4.set_val(q[3])
+    #     sq5.set_val(q[4])
+    #
+    # radio.on_clicked(changeSolve)
+
     # commit
     plt.show()

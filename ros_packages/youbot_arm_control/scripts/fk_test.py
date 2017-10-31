@@ -22,14 +22,13 @@ class Checker:
 
     def callbackJointState(self, jointState):
         qs = []
-        qs.append(0)    # joint_0 -- fixed, base frame
         for i, jointPosition in enumerate(jointState.position):
             qs.append(jointPosition)
-            # pass griper' fingers frames (and griper base too)
+            # pass griper's fingers frames (and griper base too)
             if i == 4:
                 break
 
-        xyz, qtn, rpy = self.ks.forward(qs)
+        xyz, qtn, rpy, h = self.ks.forward(qs)
 
         rospy.loginfo(' qs: ' + str(qs))
         rospy.loginfo('xyz: ' + str(xyz) + ' qtn: ' + str(qtn))
@@ -37,7 +36,7 @@ class Checker:
 
         # set orange brick at the end of griper
         br = tf.TransformBroadcaster()
-        br.sendTransform(xyz, qtn, rospy.Time.now(), 'test_box', "base_link")
+        br.sendTransform(xyz, qtn, rospy.Time.now(), 'test_box', "ground_link")
 
 if __name__ == '__main__':
     Checker()
