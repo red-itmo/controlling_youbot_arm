@@ -1,0 +1,3 @@
+[submodule "youbot_manipulator_science"]
+	path = youbot_manipulator_science
+	url = https://github.com/mrclient/youbot_manipulator_science.git
