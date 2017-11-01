@@ -1,0 +1,50 @@
+% матрицы однородных преобразований
+
+\begin{equation}\label{DH_matrix_Rz}
+R_{z_i, \theta_i} = 
+\left[\begin{matrix}
+\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} & 0 & 0\\
+\sin{\left (\theta_i \right )} & \cos{\left (\theta_i \right )} & 0 & 0\\
+0 & 0 & 1 & 0\\0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Tz}
+T_{z_i, d_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & d_{i}\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Tx}
+T_{x_i, a_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & a_{i}\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Rx}
+R_{x_i, \alpha_i} =
+\left[\begin{matrix}
+1 & 0 & 0 & 0\\
+0 & \cos{\left (\alpha_i \right )} & - \sin{\left (\alpha_i \right )} & 0\\
+0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & 0\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
+
+\begin{equation}\label{DH_matrix_Ai}
+^{i}A_{i+1} =
+\left[\begin{matrix}
+\cos{\left (\theta_i \right )} & - \sin{\left (\theta_i \right )} \cos{\left (\alpha_i \right )} & \sin{\left (\alpha_i \right )} \sin{\left (\theta_i \right )} & a_{i} \cos{\left (\theta_i \right )}\\
+\sin{\left (\theta_i \right )} & \cos{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & - \sin{\left (\alpha_i \right )} \cos{\left (\theta_i \right )} & a_{i} \sin{\left (\theta_i \right )}\\
+0 & \sin{\left (\alpha_i \right )} & \cos{\left (\alpha_i \right )} & d_{i}\\
+0 & 0 & 0 & 1
+\end{matrix}\right]
+\end{equation}
