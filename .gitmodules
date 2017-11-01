@@ -10,3 +10,6 @@
 [submodule "ros_packages/youbot_arm_kinematics"]
 	path = ros_packages/youbot_arm_kinematics
 	url = https://github.com/kirillin/youbot_arm_kinematics.git
+[submodule "manipulator_dynamics"]
+	path = manipulator_dynamics
+	url = https://github.com/kirillin/manipulator_dynamics.git
