@@ -1,3 +1,12 @@
 [submodule "youbot_manipulator_science"]
 	path = youbot_manipulator_science
 	url = https://github.com/mrclient/youbot_manipulator_science.git
+[submodule "ros_packages/youbot_arm_ident_movements"]
+	path = ros_packages/youbot_arm_ident_movements
+	url = https://github.com/mrclient/youbot_arm_ident_movements.git
+[submodule "ros_packages/youbot_arm_torque_control"]
+	path = ros_packages/youbot_arm_torque_control
+	url = https://github.com/mrclient/youbot_arm_torque_control.git
+[submodule "ros_packages/youbot_arm_kinematics"]
+	path = ros_packages/youbot_arm_kinematics
+	url = https://github.com/kirillin/youbot_arm_kinematics.git
