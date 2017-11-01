@@ -1,1 +1,0 @@
--a[0]*(-a[0]*ddq[1] + d[0]*sin(q[0])*ddq[0] + d[0]*cos(q[0])*dq[0]**2)2*a[0]*ddq[1] - d[0]*sin(q[0])*ddq[0] - d[0]*cos(q[0])*dq[0]**2-a[0]*(sin(q[0])*ddq[0] + cos(q[0])*dq[0]**2)-d[0]*(sin(q[0])*dq[0]**2 - cos(q[0])*ddq[0])0ddq[1]0sin(q[0])*ddq[0] + cos(q[0])*dq[0]**20sin(q[0])*dq[0]**2 - cos(q[0])*ddq[0]

@@ -1,1 +1,0 @@
-ALL = ['kinematics', 'parser']
